@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 
 import type {
   ForecastDay,
@@ -118,6 +118,7 @@ export function WeatherView({
   title,
   weather,
 }: WeatherViewProps) {
+  const hourlyForecastListId = useId();
   const [selectedHourlyDayDate, setSelectedHourlyDayDate] = useState<string | null>(
     weather.daily[0]?.date ?? null,
   );
@@ -144,12 +145,14 @@ export function WeatherView({
           <h2 className={styles.heading}>{formatLocationLabel(highlightedLocation)}</h2>
         </div>
         <div className={styles.headerMeta}>
-          <p className={styles.timezone}>{highlightedLocation.timezone}</p>
+          <p className={styles.timezone}>Timezone: {highlightedLocation.timezone}</p>
           <p className={styles.observedAt}>
             Observed at {formatObservedTime(weather.current.observedAt)}
           </p>
           {isRefreshing ? (
-            <p className={styles.refreshing}>Refreshing forecast...</p>
+            <p aria-live="polite" className={styles.refreshing} role="status">
+              Refreshing forecast...
+            </p>
           ) : null}
         </div>
       </div>
@@ -206,7 +209,7 @@ export function WeatherView({
                 selectedUnits.tempUnit,
               )} and ${formatWindUnitLabel(
                 selectedUnits.windUnit,
-              )}. The cards below keep the last successful units until a refreshed forecast arrives.`}
+              )}. The cards below keep the last successful forecast visible until the refreshed values arrive.`}
         </p>
       </section>
 
@@ -331,6 +334,7 @@ export function WeatherView({
 
               return (
                 <button
+                  aria-controls={hourlyForecastListId}
                   aria-pressed={isSelected}
                   className={`${styles.dayButton} ${
                     isSelected ? styles.dayButtonSelected : ""
@@ -348,7 +352,7 @@ export function WeatherView({
         ) : null}
 
         {hourlyForecastDay ? (
-          <ul className={styles.hourlyList}>
+          <ul className={styles.hourlyList} id={hourlyForecastListId}>
             {hourlyForecastDay.hourly.map((hour) => (
               <li className={styles.hourlyCard} key={hour.time}>
                 <p className={styles.hourlyTime}>{formatHourlyTime(hour.time)}</p>

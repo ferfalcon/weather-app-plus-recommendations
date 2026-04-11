@@ -1,18 +1,18 @@
 .layout {
   display: grid;
-  gap: 1rem;
-  padding-block: 1rem;
+  gap: 0.9rem;
+  padding-block: 0.75rem 1rem;
 }
 
 .hero,
 .sidebar,
 .weatherPanel {
-  padding: 1.25rem;
+  padding: 1rem;
 }
 
 .hero {
   display: grid;
-  gap: 1rem;
+  gap: 1.15rem;
 }
 
 .kicker,
@@ -29,13 +29,14 @@
 .sidebarHeading {
   color: var(--color-text-strong);
   font-family: var(--font-display);
-  line-height: 0.95;
+  line-height: 0.96;
   margin: 0;
+  text-wrap: balance;
 }
 
 .heading {
-  font-size: clamp(2.5rem, 8vw, 4.75rem);
-  max-width: 12ch;
+  font-size: clamp(2rem, 11vw, 4.35rem);
+  max-width: 9ch;
 }
 
 .sidebarHeading {
@@ -45,15 +46,15 @@
 
 .copy {
   color: var(--color-text);
-  font-size: 1rem;
+  font-size: 0.98rem;
   line-height: 1.6;
   margin: 0;
-  max-width: 44ch;
+  max-width: 38ch;
 }
 
 .form {
   display: grid;
-  gap: 0.85rem;
+  gap: 0.75rem;
 }
 
 .label {
@@ -63,12 +64,18 @@
 
 .formRow {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.65rem;
+}
+
+.submitButton {
+  width: 100%;
 }
 
 .helper {
   color: var(--color-text-muted);
+  line-height: 1.5;
   margin: 0;
+  min-height: 3rem;
 }
 
 .statusPanel,
@@ -79,7 +86,14 @@
   background: var(--color-surface-muted);
   border: 1px solid var(--color-border);
   border-radius: calc(var(--radius-xl) - 0.35rem);
+  display: grid;
+  gap: 0.7rem;
   padding: 1rem;
+}
+
+.statusPanel {
+  border-color: rgb(37 143 123 / 0.28);
+  background: linear-gradient(180deg, rgb(239 249 246 / 0.96), rgb(245 252 249 / 0.92));
 }
 
 .errorPanel {
@@ -120,19 +134,18 @@
 }
 
 .resultsSection {
-  display: grid;
-  gap: 1rem;
+  gap: 0.9rem;
 }
 
 .resultsHeader {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.75rem;
   justify-content: space-between;
 }
 
 .resultsHeading {
-  font-size: 1.65rem;
+  font-size: 1.45rem;
 }
 
 .resultsMeta {
@@ -150,16 +163,16 @@
 }
 
 .resultButton {
-  align-items: center;
+  align-items: start;
   background: rgb(255 255 255 / 0.74);
   border: 1px solid var(--color-border);
   border-radius: 1.25rem;
   color: inherit;
   cursor: pointer;
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 0.9rem;
   text-align: left;
   transition:
     border-color 160ms ease,
@@ -181,12 +194,15 @@
 .resultButtonSelected {
   background: linear-gradient(180deg, rgb(232 247 242 / 0.98), rgb(241 250 246 / 0.95));
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 1px rgb(37 143 123 / 0.2);
+  box-shadow:
+    0 0 0 1px rgb(37 143 123 / 0.2),
+    0 10px 24px rgb(24 130 113 / 0.1);
 }
 
 .resultText {
   display: grid;
   gap: 0.35rem;
+  min-width: 0;
 }
 
 .resultTitle {
@@ -197,6 +213,7 @@
 .resultMetaLine {
   color: var(--color-text-muted);
   font-size: 0.94rem;
+  overflow-wrap: anywhere;
 }
 
 .resultBadge {
@@ -206,6 +223,7 @@
   color: var(--color-text-strong);
   font-size: 0.84rem;
   font-weight: 700;
+  justify-self: start;
   padding: 0.45rem 0.8rem;
   white-space: nowrap;
 }
@@ -228,19 +246,36 @@
 }
 
 .sampleList {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 0.65rem;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+}
+
+.sampleButton {
+  width: 100%;
 }
 
 .sidebar {
   display: grid;
-  gap: 0.85rem;
+  gap: 1rem;
 }
 
 .weatherPanel {
   display: grid;
-  gap: 1rem;
+  gap: 0.85rem;
+}
+
+.selectionCard {
+  border-color: rgb(37 143 123 / 0.24);
+  background: linear-gradient(180deg, rgb(241 250 247 / 0.96), rgb(247 252 250 / 0.94));
+}
+
+.selectionHeader {
+  align-items: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
 }
 
 .selectionLabel {
@@ -250,10 +285,22 @@
   margin: 0;
 }
 
+.selectionBadge {
+  background: rgb(255 255 255 / 0.92);
+  border: 1px solid rgb(37 143 123 / 0.22);
+  border-radius: var(--radius-pill);
+  color: var(--color-accent-strong);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.38rem 0.65rem;
+  text-transform: uppercase;
+}
+
 .selectionDetails {
   display: grid;
   gap: 0.85rem;
-  margin: 1rem 0 0;
+  margin: 0.35rem 0 0;
 }
 
 .selectionDetails div {
@@ -277,13 +324,13 @@
 .selectionCopy {
   color: var(--color-text);
   line-height: 1.6;
-  margin: 1rem 0 0;
+  margin: 0.2rem 0 0;
 }
 
 .checklist {
   color: var(--color-text);
   display: grid;
-  gap: 0.9rem;
+  gap: 0.75rem;
   margin: 0;
   padding-left: 1.2rem;
 }
@@ -292,14 +339,65 @@
   color: var(--color-accent-strong);
 }
 
+@media (min-width: 30rem) {
+  .hero,
+  .sidebar,
+  .weatherPanel {
+    padding: 1.15rem;
+  }
+
+  .selectionDetails {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 34rem) {
+  .resultButton {
+    align-items: center;
+    gap: 1rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .resultBadge {
+    justify-self: end;
+  }
+}
+
 @media (min-width: 48rem) {
   .formRow {
     align-items: end;
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
+  .submitButton {
+    width: auto;
+  }
+
   .resultsHeader {
     align-items: center;
+  }
+
+  .resultsList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 56rem) {
+  .layout {
+    align-items: start;
+    gap: 1rem 1.25rem;
+    grid-template-columns: minmax(0, 1.4fr) minmax(17rem, 0.9fr);
+    padding-block: 1.5rem 2rem;
+  }
+
+  .hero,
+  .sidebar,
+  .weatherPanel {
+    padding: 1.35rem;
+  }
+
+  .weatherPanel {
+    grid-column: 1 / -1;
   }
 }
 
@@ -315,10 +413,6 @@
   .sidebar,
   .weatherPanel {
     padding: 1.6rem;
-  }
-
-  .resultsList {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .weatherPanel {

@@ -46,6 +46,11 @@ describe("WeatherView", () => {
   it("switches the hourly forecast day using local UI state", () => {
     renderWeatherView();
 
+    const todayButton = screen.getByRole("button", { name: /Today/i });
+    const tomorrowButton = screen.getByRole("button", { name: /Tomorrow/i });
+
+    expect(todayButton).toHaveAttribute("aria-pressed", "true");
+    expect(tomorrowButton).toHaveAttribute("aria-pressed", "false");
     expect(
       screen.getByRole("heading", {
         level: 3,
@@ -55,7 +60,7 @@ describe("WeatherView", () => {
     expect(screen.getByText("09:00")).toBeInTheDocument();
     expect(screen.queryByText("11:00")).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: /Tomorrow/i }));
+    fireEvent.click(tomorrowButton);
 
     expect(
       screen.getByRole("heading", {
@@ -63,6 +68,8 @@ describe("WeatherView", () => {
         name: "Hourly forecast for Tomorrow",
       }),
     ).toBeInTheDocument();
+    expect(todayButton).toHaveAttribute("aria-pressed", "false");
+    expect(tomorrowButton).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByText("11:00")).toBeInTheDocument();
     expect(screen.queryByText("09:00")).not.toBeInTheDocument();
   });

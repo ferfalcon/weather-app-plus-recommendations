@@ -40,7 +40,7 @@ describe("LocationSearchEmptyState", () => {
     expect(
       screen.getByRole("heading", {
         level: 1,
-        name: "Search, refetch units, switch hourly days.",
+        name: "Search for a place, then read the forecast.",
       }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Search location")).toBeInTheDocument();
@@ -71,6 +71,24 @@ describe("LocationSearchEmptyState", () => {
       }),
     ).toBeInTheDocument();
     expect(searchLocations).toHaveBeenCalledWith("Atlantis");
+  });
+
+  it("marks the selected location button as pressed", async () => {
+    vi.mocked(searchLocations).mockResolvedValue([testLocation]);
+
+    renderLocationSearchEmptyState();
+
+    submitSearch("Montevideo");
+
+    const locationResultButton = await screen.findByRole("button", {
+      name: /selected location|select montevideo/i,
+    });
+
+    expect(locationResultButton).toHaveAttribute("aria-pressed", "false");
+
+    fireEvent.click(locationResultButton);
+
+    expect(locationResultButton).toHaveAttribute("aria-pressed", "true");
   });
 
   it("shows the weather API error state after selecting a location", async () => {
