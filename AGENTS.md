@@ -392,6 +392,21 @@ If forced to choose, prefer:
 
 ---
 
+## Installed SKILLS usage
+
+Installed SKILLS are supplemental guidance only.
+
+Priority order:
+1. existing repo code and patterns
+2. `AGENTS.md`
+3. `project-decisions.md`
+4. installed SKILLS
+
+SKILLS must not override the locked stack, agreed architecture, or current repo conventions.
+Use them only as framework-specific implementation support.
+
+---
+
 ## External systems
 
 ### Weather provider
