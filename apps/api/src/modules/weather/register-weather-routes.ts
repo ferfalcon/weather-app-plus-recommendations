@@ -3,14 +3,13 @@ import type { FastifyInstance } from "fastify";
 import {
   weatherQuerySchema,
   weatherResponseSchema,
-  type WeatherQuery,
 } from "@weather-app-plus-recommendations/contracts";
 
 import { InvalidRequestError } from "../../lib/app-errors";
 import { buildPlaceholderWeatherPageResponse } from "./build-placeholder-weather-page-response";
 
 export async function registerWeatherRoutes(app: FastifyInstance) {
-  app.get<{ Querystring: WeatherQuery }>("/", async (request) => {
+  app.get("/", async (request) => {
     const queryResult = weatherQuerySchema.safeParse(request.query);
 
     if (!queryResult.success) {
@@ -20,8 +19,10 @@ export async function registerWeatherRoutes(app: FastifyInstance) {
       );
     }
 
+    const validatedQuery = queryResult.data;
+
     return weatherResponseSchema.parse(
-      buildPlaceholderWeatherPageResponse(queryResult.data),
+      buildPlaceholderWeatherPageResponse(validatedQuery),
     );
   });
 }

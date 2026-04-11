@@ -1,9 +1,6 @@
 import type { FastifyInstance } from "fastify";
 
-import {
-  locationSearchQuerySchema,
-  type LocationSearchQuery,
-} from "@weather-app-plus-recommendations/contracts";
+import { locationSearchQuerySchema } from "@weather-app-plus-recommendations/contracts";
 
 import {
   InvalidRequestError,
@@ -13,7 +10,7 @@ import { LocationSearchProviderError } from "./fetch-open-meteo-location-results
 import { searchLocations } from "./search-locations";
 
 export async function registerLocationRoutes(app: FastifyInstance) {
-  app.get<{ Querystring: LocationSearchQuery }>("/search", async (request) => {
+  app.get("/search", async (request) => {
     const queryResult = locationSearchQuerySchema.safeParse(request.query);
 
     if (!queryResult.success) {
@@ -23,8 +20,10 @@ export async function registerLocationRoutes(app: FastifyInstance) {
       );
     }
 
+    const validatedQuery = queryResult.data;
+
     try {
-      return await searchLocations(queryResult.data.q);
+      return await searchLocations(validatedQuery.q);
     } catch (error) {
       if (error instanceof LocationSearchProviderError) {
         throw new UpstreamProviderError("Location search provider unavailable.", {
@@ -33,7 +32,7 @@ export async function registerLocationRoutes(app: FastifyInstance) {
             providerRequestUrl: error.requestUrl,
             providerResponseBody: error.responseBodyText,
             providerStatus: error.status,
-            query: queryResult.data.q,
+            query: validatedQuery.q,
           },
           logMessage: "Location search provider request failed.",
         });
