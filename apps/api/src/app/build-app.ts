@@ -58,6 +58,10 @@ export function buildApp(runtimeConfig: ApiRuntimeConfig) {
     });
   });
 
+  app.get("/healthz", async () => ({
+    status: "ok",
+  }));
+
   app.register(registerLocationRoutes, {
     prefix: "/api/locations",
   });
