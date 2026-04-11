@@ -1,0 +1,44 @@
+@font-face {
+  font-display: swap;
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-weight: 200 800;
+  src: url("../../../frontend-mentor/assets/fonts/Bricolage_Grotesque/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf")
+    format("truetype");
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 100 900;
+  src: url("../../../frontend-mentor/assets/fonts/DM_Sans/DMSans-VariableFont_opsz,wght.ttf")
+    format("truetype");
+}
+
+:root {
+  --font-display: "Bricolage Grotesque", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+
+  --color-page: #f5f7f2;
+  --color-page-deep: #dfebe8;
+  --color-surface: rgb(255 255 255 / 0.78);
+  --color-surface-muted: rgb(245 248 246 / 0.92);
+  --color-border: rgb(18 37 37 / 0.12);
+  --color-border-strong: rgb(18 37 37 / 0.2);
+  --color-text-strong: #112728;
+  --color-text: #264345;
+  --color-text-muted: #5f7576;
+  --color-text-soft: #738788;
+  --color-accent: #2d8f79;
+  --color-accent-strong: #176d5d;
+  --color-accent-contrast: #effffb;
+  --color-focus-ring: rgb(236 137 60 / 0.7);
+
+  --radius-md: 1rem;
+  --radius-xl: 1.75rem;
+  --radius-pill: 999px;
+
+  --shadow-surface: 0 18px 45px rgb(31 48 49 / 0.12);
+  --shadow-accent: 0 12px 30px rgb(24 130 113 / 0.2);
+}

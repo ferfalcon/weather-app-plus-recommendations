@@ -1,0 +1,126 @@
+.layout {
+  display: grid;
+  gap: 1rem;
+  padding-block: 1rem;
+}
+
+.hero,
+.sidebar {
+  padding: 1.25rem;
+}
+
+.hero {
+  display: grid;
+  gap: 1rem;
+}
+
+.kicker,
+.sidebarKicker {
+  margin: 0;
+  color: var(--color-accent-strong);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.heading,
+.sidebarHeading {
+  color: var(--color-text-strong);
+  font-family: var(--font-display);
+  line-height: 0.95;
+  margin: 0;
+}
+
+.heading {
+  font-size: clamp(2.5rem, 8vw, 4.75rem);
+  max-width: 12ch;
+}
+
+.sidebarHeading {
+  font-size: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.copy {
+  color: var(--color-text);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 44ch;
+}
+
+.form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.label {
+  color: var(--color-text-strong);
+  font-weight: 700;
+}
+
+.formRow {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.helper {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.samples {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.samplesLabel {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.sampleList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.sidebar {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.checklist {
+  color: var(--color-text);
+  display: grid;
+  gap: 0.9rem;
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.checklist li::marker {
+  color: var(--color-accent-strong);
+}
+
+@media (min-width: 48rem) {
+  .formRow {
+    align-items: end;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+@media (min-width: 70rem) {
+  .layout {
+    align-items: stretch;
+    gap: 1.25rem;
+    grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 0.9fr);
+    padding-block: 2rem 3rem;
+  }
+
+  .hero,
+  .sidebar {
+    padding: 1.6rem;
+  }
+}

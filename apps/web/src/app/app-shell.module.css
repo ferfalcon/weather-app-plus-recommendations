@@ -1,0 +1,46 @@
+.app {
+  min-height: 100vh;
+  position: relative;
+}
+
+.backdrop {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at top right, rgb(39 139 120 / 0.2), transparent 30%),
+    radial-gradient(circle at left center, rgb(235 138 61 / 0.14), transparent 25%);
+}
+
+.header {
+  position: relative;
+  z-index: 1;
+  padding-block: 1.25rem 0.5rem;
+}
+
+.headerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0.3rem 0 0;
+  color: var(--color-text-strong);
+  font-size: 1rem;
+}
+
+.main {
+  position: relative;
+  z-index: 1;
+  padding-block: 1rem 2.5rem;
+}
