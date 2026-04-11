@@ -96,6 +96,19 @@ function formatRecommendationMetaLabel(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
+function formatRecommendationSourceLabel(
+  source: WeatherPageResponse["recommendations"]["source"],
+) {
+  switch (source) {
+    case "ai":
+      return "AI";
+    case "fallback":
+      return "Fallback";
+    case "placeholder":
+      return "Placeholder";
+  }
+}
+
 export function WeatherView({
   highlightedLocation,
   isRefreshing = false,
@@ -243,13 +256,16 @@ export function WeatherView({
         </div>
 
         <p className={styles.recommendationsCopy}>
-          These fallback suggestions use the same normalized weather payload shown above.
+          These suggestions use the same normalized weather payload shown above.
         </p>
 
         <ul className={styles.recommendationsList}>
           {weather.recommendations.items.map((recommendation) => (
             <li className={styles.recommendationCard} key={recommendation.title}>
               <div className={styles.recommendationMeta}>
+                <span className={styles.recommendationBadge}>
+                  {formatRecommendationSourceLabel(weather.recommendations.source)}
+                </span>
                 <span className={styles.recommendationBadge}>
                   {formatRecommendationMetaLabel(recommendation.type)}
                 </span>

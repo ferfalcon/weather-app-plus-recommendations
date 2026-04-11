@@ -18,6 +18,7 @@ export type ApiLogLevel = (typeof supportedLogLevels)[number];
 
 export type ApiRuntimeConfig = {
   corsOrigins: string[];
+  geminiApiKey: string | undefined;
   logLevel: ApiLogLevel;
   server: {
     host: string;
@@ -84,6 +85,7 @@ function parseCorsOrigins(value: string | undefined) {
 export function getServerConfig(env: RuntimeEnv = process.env): ApiRuntimeConfig {
   return {
     corsOrigins: parseCorsOrigins(env.CORS_ORIGINS),
+    geminiApiKey: getNonEmptyValue(env.GEMINI_API_KEY),
     logLevel: parseLogLevel(env.LOG_LEVEL),
     server: {
       host: getNonEmptyValue(env.HOST) ?? defaultHost,

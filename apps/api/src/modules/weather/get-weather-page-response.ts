@@ -1,9 +1,13 @@
+import type { FastifyBaseLogger } from "fastify";
+
 import type {
   LocationOption,
   WeatherQuery,
 } from "@weather-app-plus-recommendations/contracts";
 import { weatherResponseSchema } from "@weather-app-plus-recommendations/contracts";
 
+import type { ApiRuntimeConfig } from "../../lib/get-server-config";
+import { getRecommendations } from "../recommendations/get-recommendations";
 import { searchLocations } from "../locations/search-locations";
 import {
   buildOpenMeteoWeatherForecastRequestUrl,
@@ -99,19 +103,24 @@ async function resolveWeatherLocation(
   }
 }
 
-export async function getWeatherPageResponse(query: WeatherQuery) {
+export async function getWeatherPageResponse(
+  query: WeatherQuery,
+  runtimeConfig: ApiRuntimeConfig,
+  logger?: {
+    info: FastifyBaseLogger["info"];
+  },
+) {
   const forecast = await fetchOpenMeteoWeatherForecast(query);
   const location = await resolveWeatherLocation(forecast, query);
   const requestUrl = buildOpenMeteoWeatherForecastRequestUrl(query);
+  let mappedWeather: ReturnType<typeof mapOpenMeteoWeatherResponse>;
 
   try {
-    return weatherResponseSchema.parse(
-      mapOpenMeteoWeatherResponse({
-        forecast,
-        location,
-        query,
-      }),
-    );
+    mappedWeather = mapOpenMeteoWeatherResponse({
+      forecast,
+      location,
+      query,
+    });
   } catch (error) {
     throw new WeatherProviderError(
       "Open-Meteo weather response was missing required fields.",
@@ -123,4 +132,17 @@ export async function getWeatherPageResponse(query: WeatherQuery) {
       },
     );
   }
+
+  const recommendations = await getRecommendations({
+    current: mappedWeather.current,
+    daily: mappedWeather.daily,
+    geminiApiKey: runtimeConfig.geminiApiKey,
+    logger,
+    units: mappedWeather.units,
+  });
+
+  return weatherResponseSchema.parse({
+    ...mappedWeather,
+    recommendations,
+  });
 }
