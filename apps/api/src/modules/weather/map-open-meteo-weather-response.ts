@@ -4,6 +4,7 @@ import type {
   WeatherQuery,
 } from "@weather-app-plus-recommendations/contracts";
 
+import { buildFallbackRecommendations } from "../recommendations/build-fallback-recommendations";
 import type { OpenMeteoForecastResponse } from "./fetch-open-meteo-weather-forecast";
 import { mapOpenMeteoWeatherCode } from "./map-open-meteo-weather-code";
 
@@ -12,30 +13,6 @@ type MapWeatherResponseOptions = {
   location: LocationOption;
   query: WeatherQuery;
 };
-
-const placeholderRecommendations = [
-  {
-    title: "Check back for tailored suggestions",
-    description:
-      "Recommendations stay in the response for contract compatibility while Phase 2.5 focuses on real weather data.",
-    type: "flexible" as const,
-    reasonTag: "mixed" as const,
-  },
-  {
-    title: "Use the forecast to shape your plan",
-    description:
-      "The weather payload is now live from Open-Meteo, so current conditions and upcoming changes are ready for the UI.",
-    type: "outdoor" as const,
-    reasonTag: "sunny" as const,
-  },
-  {
-    title: "Keep an indoor backup option nearby",
-    description:
-      "Recommendation fallback rules and Gemini integration are intentionally deferred to later phases.",
-    type: "indoor" as const,
-    reasonTag: "rainy" as const,
-  },
-];
 
 function roundValue(value: number) {
   return Number(value.toFixed(1));
@@ -164,6 +141,27 @@ export function mapOpenMeteoWeatherResponse({
   }
 
   const currentCondition = mapOpenMeteoWeatherCode(current.weather_code);
+  const units = {
+    temperature: query.tempUnit,
+    windSpeed: query.windUnit,
+    precipitation: "mm" as const,
+  };
+  const mappedCurrentWeather = {
+    temperature: roundValue(current.temperature_2m),
+    feelsLike: roundValue(current.apparent_temperature),
+    humidity: Math.round(current.relative_humidity_2m),
+    windSpeed: roundValue(current.wind_speed_10m),
+    precipitation: roundValue(current.precipitation),
+    conditionCode: currentCondition.conditionCode,
+    conditionLabel: currentCondition.conditionLabel,
+    iconKey: currentCondition.iconKey,
+    observedAt: current.time,
+  };
+  const recommendations = buildFallbackRecommendations({
+    current: mappedCurrentWeather,
+    daily,
+    units,
+  });
 
   return {
     location: {
@@ -172,26 +170,9 @@ export function mapOpenMeteoWeatherResponse({
       longitude: query.lon,
       timezone: getWeatherLocationTimezone(forecast),
     },
-    units: {
-      temperature: query.tempUnit,
-      windSpeed: query.windUnit,
-      precipitation: "mm",
-    },
-    current: {
-      temperature: roundValue(current.temperature_2m),
-      feelsLike: roundValue(current.apparent_temperature),
-      humidity: Math.round(current.relative_humidity_2m),
-      windSpeed: roundValue(current.wind_speed_10m),
-      precipitation: roundValue(current.precipitation),
-      conditionCode: currentCondition.conditionCode,
-      conditionLabel: currentCondition.conditionLabel,
-      iconKey: currentCondition.iconKey,
-      observedAt: current.time,
-    },
+    units,
+    current: mappedCurrentWeather,
     daily,
-    recommendations: {
-      items: placeholderRecommendations,
-      source: "placeholder",
-    },
+    recommendations,
   };
 }

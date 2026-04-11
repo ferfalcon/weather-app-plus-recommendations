@@ -92,6 +92,10 @@ function getHourlyForecastDay(
   return dailyForecast.find((day) => day.date === selectedDayDate) ?? dailyForecast[0] ?? null;
 }
 
+function formatRecommendationMetaLabel(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 export function WeatherView({
   highlightedLocation,
   isRefreshing = false,
@@ -225,6 +229,39 @@ export function WeatherView({
             <dd>{formatPrecipitation(weather.current.precipitation)}</dd>
           </div>
         </dl>
+      </section>
+
+      <section
+        className={styles.recommendationsSection}
+        aria-labelledby="recommendations-heading"
+      >
+        <div className={styles.sectionHeader}>
+          <p className={styles.sectionKicker}>Suggestions</p>
+          <h3 className={styles.sectionHeading} id="recommendations-heading">
+            Suggestions for today
+          </h3>
+        </div>
+
+        <p className={styles.recommendationsCopy}>
+          These fallback suggestions use the same normalized weather payload shown above.
+        </p>
+
+        <ul className={styles.recommendationsList}>
+          {weather.recommendations.items.map((recommendation) => (
+            <li className={styles.recommendationCard} key={recommendation.title}>
+              <div className={styles.recommendationMeta}>
+                <span className={styles.recommendationBadge}>
+                  {formatRecommendationMetaLabel(recommendation.type)}
+                </span>
+                <span className={styles.recommendationBadge}>
+                  {formatRecommendationMetaLabel(recommendation.reasonTag)}
+                </span>
+              </div>
+              <h4 className={styles.recommendationTitle}>{recommendation.title}</h4>
+              <p className={styles.recommendationDescription}>{recommendation.description}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className={styles.forecastSection} aria-labelledby="daily-forecast-heading">

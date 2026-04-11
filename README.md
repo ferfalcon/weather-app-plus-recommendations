@@ -38,7 +38,7 @@ weather-app-plus-recommendations/
 - `GET /api/locations/search?q=...` now calls Open-Meteo geocoding and returns normalized `LocationOption[]` results
 - `GET /api/weather?lat=...&lon=...&tempUnit=...&windUnit=...` now calls Open-Meteo forecast data and returns normalized current, daily, and hourly weather payloads
 - The frontend supports search submit, loading, no-results, ambiguous-result selection, live weather rendering, and distinct weather API error states
-- Recommendations remain placeholder-only for contract compatibility, and Gemini integration is still intentionally out of scope at this phase
+- The weather payload now includes deterministic fallback recommendations, and Gemini integration remains intentionally deferred
 
 ## Commands
 
@@ -53,7 +53,7 @@ pnpm test
 pnpm build
 ```
 
-At this phase, `pnpm dev:api` starts the backend on `http://localhost:3001`, and `pnpm dev:web` starts the frontend on `http://127.0.0.1:5173`. The frontend now supports the end-to-end location search and live weather flow through the internal API, while recommendation fallback and Gemini work remain deferred to later phases.
+At this phase, `pnpm dev:api` starts the backend on `http://localhost:3001`, and `pnpm dev:web` starts the frontend on `http://127.0.0.1:5173`. The frontend now supports the end-to-end location search, live weather flow, and backend-owned fallback suggestions through the internal API, while Gemini recommendation generation remains deferred to a later phase.
 
 ## API runtime env vars
 
