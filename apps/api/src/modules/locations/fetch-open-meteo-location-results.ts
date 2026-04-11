@@ -1,3 +1,5 @@
+import { request as httpsRequest } from "node:https";
+
 const OPEN_METEO_GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search";
 const locationSearchRequestTimeoutMs = 8_000;
 
@@ -44,6 +46,60 @@ export class LocationSearchProviderError extends Error {
   }
 }
 
+type ProviderHttpResponse = {
+  bodyText: string;
+  status: number | undefined;
+};
+
+function requestOpenMeteoLocationResults(requestUrl: string): Promise<ProviderHttpResponse> {
+  return new Promise((resolve, reject) => {
+    const url = new URL(requestUrl);
+
+    const request = httpsRequest(
+      {
+        family: 4,
+        headers: {
+          accept: "application/json",
+        },
+        hostname: url.hostname,
+        method: "GET",
+        path: `${url.pathname}${url.search}`,
+        port: url.port || 443,
+        protocol: url.protocol,
+      },
+      (response) => {
+        const chunks: string[] = [];
+
+        response.setEncoding("utf8");
+        response.on("data", (chunk: string) => {
+          chunks.push(chunk);
+        });
+        response.on("end", () => {
+          resolve({
+            bodyText: chunks.join(""),
+            status: response.statusCode,
+          });
+        });
+      },
+    );
+
+    request.setTimeout(locationSearchRequestTimeoutMs, () => {
+      const timeoutError = new Error(
+        `Open-Meteo geocoding request timed out after ${locationSearchRequestTimeoutMs}ms.`,
+      );
+
+      timeoutError.name = "TimeoutError";
+      request.destroy(timeoutError);
+    });
+
+    request.on("error", (error) => {
+      reject(error);
+    });
+
+    request.end();
+  });
+}
+
 export async function fetchOpenMeteoLocationResults(query: string) {
   const url = new URL(OPEN_METEO_GEOCODING_URL);
 
@@ -53,22 +109,12 @@ export async function fetchOpenMeteoLocationResults(query: string) {
   url.searchParams.set("format", "json");
 
   const requestUrl = url.toString();
-  const abortController = new AbortController();
-  const timeoutId = setTimeout(() => {
-    abortController.abort();
-  }, locationSearchRequestTimeoutMs);
-
-  let response: Response;
+  let providerResponse: ProviderHttpResponse;
 
   try {
-    response = await fetch(url, {
-      headers: {
-        accept: "application/json",
-      },
-      signal: abortController.signal,
-    });
+    providerResponse = await requestOpenMeteoLocationResults(requestUrl);
   } catch (error) {
-    if (error instanceof Error && error.name === "AbortError") {
+    if (error instanceof Error && error.name === "TimeoutError") {
       throw new LocationSearchProviderError(
         `Open-Meteo geocoding request timed out after ${locationSearchRequestTimeoutMs}ms.`,
         {
@@ -86,24 +132,47 @@ export async function fetchOpenMeteoLocationResults(query: string) {
       responseBodyText: undefined,
       status: undefined,
     });
-  } finally {
-    clearTimeout(timeoutId);
   }
 
-  if (!response.ok) {
-    const responseBodyText = (await response.text()).trim();
-
+  if (providerResponse.status === undefined) {
     throw new LocationSearchProviderError(
-      `Open-Meteo geocoding request returned ${response.status}.`,
+      "Open-Meteo geocoding request returned no HTTP status.",
       {
         requestUrl,
-        responseBodyText: responseBodyText || undefined,
-        status: response.status,
+        responseBodyText: providerResponse.bodyText.trim() || undefined,
+        status: undefined,
       },
     );
   }
 
-  const responseBody = (await response.json()) as OpenMeteoGeocodingResponse;
+  if (providerResponse.status < 200 || providerResponse.status >= 300) {
+    const responseBodyText = providerResponse.bodyText.trim();
+
+    throw new LocationSearchProviderError(
+      `Open-Meteo geocoding request returned ${providerResponse.status}.`,
+      {
+        requestUrl,
+        responseBodyText: responseBodyText || undefined,
+        status: providerResponse.status,
+      },
+    );
+  }
+
+  let responseBody: OpenMeteoGeocodingResponse;
+
+  try {
+    responseBody = JSON.parse(providerResponse.bodyText) as OpenMeteoGeocodingResponse;
+  } catch (error) {
+    throw new LocationSearchProviderError(
+      "Open-Meteo geocoding response could not be parsed as JSON.",
+      {
+        cause: error,
+        requestUrl,
+        responseBodyText: providerResponse.bodyText.trim() || undefined,
+        status: providerResponse.status,
+      },
+    );
+  }
 
   if (!Array.isArray(responseBody.results)) {
     return [];
