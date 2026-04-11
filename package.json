@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "packageManager": "pnpm@10.30.3",
   "scripts": {
+    "dev": "pnpm --parallel --filter @weather-app-plus-recommendations/api --filter @weather-app-plus-recommendations/web --if-present dev",
+    "dev:web": "pnpm --filter @weather-app-plus-recommendations/web --if-present dev",
+    "dev:api": "pnpm --filter @weather-app-plus-recommendations/api --if-present dev",
     "lint": "pnpm -r --if-present lint",
     "typecheck": "pnpm -r --if-present typecheck",
     "test": "pnpm -r --if-present test",

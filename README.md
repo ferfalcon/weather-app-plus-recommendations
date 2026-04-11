@@ -39,13 +39,16 @@ weather-app-plus-recommendations/
 
 ```bash
 pnpm install
+pnpm dev
+pnpm dev:web
+pnpm dev:api
 pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build
 ```
 
-At this phase, those commands validate the workspace setup and will only execute package-level scripts when later phases add them.
+At this phase, the `dev*` commands are forward-compatible workspace entry points and intentionally do nothing until package-level `dev` scripts exist. The verification commands validate the workspace setup and only execute package-level scripts when later phases add them.
 
 ## Reference material
 
