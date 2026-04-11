@@ -1,0 +1,269 @@
+.layout {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.header {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.kicker,
+.sectionKicker,
+.currentLabel {
+  color: var(--color-accent-strong);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.heading,
+.sectionHeading,
+.currentTemperature {
+  color: var(--color-text-strong);
+  font-family: var(--font-display);
+  line-height: 0.98;
+  margin: 0;
+}
+
+.heading {
+  font-size: clamp(2rem, 6vw, 3.15rem);
+}
+
+.headerMeta {
+  display: grid;
+  gap: 0.2rem;
+  justify-items: start;
+}
+
+.timezone,
+.observedAt,
+.refreshing {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.refreshing {
+  color: var(--color-accent-strong);
+  font-weight: 700;
+}
+
+.currentSection,
+.forecastSection {
+  display: grid;
+  gap: 1rem;
+}
+
+.currentSection {
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.7), rgb(245 249 247 / 0.74));
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius-xl) - 0.25rem);
+  padding: 1rem;
+}
+
+.currentSummary {
+  align-items: center;
+  display: grid;
+  gap: 1rem;
+}
+
+.currentIcon,
+.dailyIcon,
+.hourlyIcon {
+  align-items: center;
+  background: rgb(255 255 255 / 0.84);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.currentIcon {
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  height: 4rem;
+  width: 4rem;
+}
+
+.currentTemperature {
+  font-size: clamp(2.6rem, 8vw, 4.4rem);
+  margin-top: 0.35rem;
+}
+
+.currentCondition {
+  color: var(--color-text);
+  font-size: 1rem;
+  margin: 0.4rem 0 0;
+}
+
+.metricsGrid {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0;
+}
+
+.metricCard {
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+  padding: 0.95rem 1rem;
+}
+
+.metricCard dt {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.metricCard dd {
+  color: var(--color-text-strong);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0.35rem 0 0;
+}
+
+.sectionHeader {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.sectionHeading {
+  font-size: 1.6rem;
+}
+
+.dailyList,
+.hourlyList {
+  display: grid;
+  gap: 0.85rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dailyCard,
+.hourlyCard {
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+}
+
+.dailyCard {
+  align-items: center;
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+}
+
+.dailyMeta {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.dailyDay {
+  color: var(--color-text-strong);
+  font-weight: 700;
+}
+
+.dailyDate {
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+}
+
+.dailyCondition {
+  align-items: center;
+  color: var(--color-text);
+  display: inline-flex;
+  gap: 0.65rem;
+}
+
+.dailyIcon,
+.hourlyIcon {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  height: 2.2rem;
+  width: 2.2rem;
+}
+
+.dailyTemperatures {
+  color: var(--color-text-strong);
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  font-weight: 700;
+}
+
+.hourlyList {
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+}
+
+.hourlyCard {
+  display: grid;
+  gap: 0.55rem;
+  justify-items: start;
+  padding: 0.95rem;
+}
+
+.hourlyTime,
+.hourlyTemperature,
+.hourlyCondition,
+.hourlyRain,
+.emptyCopy {
+  margin: 0;
+}
+
+.hourlyTime,
+.hourlyRain {
+  color: var(--color-text-muted);
+}
+
+.hourlyTime {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.hourlyTemperature {
+  color: var(--color-text-strong);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.hourlyCondition {
+  color: var(--color-text);
+}
+
+.emptyCopy {
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 40rem) {
+  .currentSummary {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .metricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dailyCard {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) auto;
+  }
+}
+
+@media (min-width: 70rem) {
+  .header {
+    align-items: end;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .headerMeta {
+    justify-items: end;
+    text-align: right;
+  }
+}

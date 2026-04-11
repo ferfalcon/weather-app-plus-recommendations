@@ -11,7 +11,7 @@ export function AppShell({ children }: PropsWithChildren) {
         <Container className={styles.headerInner}>
           <div>
             <p className={styles.eyebrow}>Weather App + Recommendations</p>
-            <p className={styles.title}>Search-first weather foundation</p>
+            <p className={styles.title}>Search-first live weather flow</p>
           </div>
         </Container>
       </header>
