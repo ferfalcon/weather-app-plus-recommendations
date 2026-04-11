@@ -9,6 +9,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@fastify/cors": "^11.2.0",
     "@weather-app-plus-recommendations/contracts": "workspace:*",
     "fastify": "^5.8.4"
   },
