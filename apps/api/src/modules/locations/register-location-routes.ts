@@ -5,6 +5,7 @@ import {
   type LocationSearchQuery,
 } from "@weather-app-plus-recommendations/contracts";
 
+import { LocationSearchProviderError } from "./fetch-open-meteo-location-results";
 import { searchLocations } from "./search-locations";
 
 export async function registerLocationRoutes(app: FastifyInstance) {
@@ -23,7 +24,26 @@ export async function registerLocationRoutes(app: FastifyInstance) {
 
       return reply.send(responseBody);
     } catch (error) {
-      request.log.error({ error }, "Location search provider request failed.");
+      if (error instanceof LocationSearchProviderError) {
+        request.log.error(
+          {
+            err: error,
+            providerRequestUrl: error.requestUrl,
+            providerResponseBody: error.responseBodyText,
+            providerStatus: error.status,
+            query: queryResult.data.q,
+          },
+          "Location search provider request failed.",
+        );
+      } else {
+        request.log.error(
+          {
+            err: error,
+            query: queryResult.data.q,
+          },
+          "Location search failed unexpectedly.",
+        );
+      }
 
       return reply.code(502).send({
         message: "Location search provider unavailable.",
