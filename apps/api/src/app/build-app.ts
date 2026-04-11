@@ -1,6 +1,10 @@
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
 
+import {
+  InvalidRequestError,
+  UpstreamProviderError,
+} from "../lib/app-errors";
 import type { ApiRuntimeConfig } from "../lib/get-server-config";
 
 import { registerLocationRoutes } from "../modules/locations/register-location-routes";
@@ -23,6 +27,35 @@ export function buildApp(runtimeConfig: ApiRuntimeConfig) {
 
       callback(null, false);
     },
+  });
+
+  app.setErrorHandler((error, request, reply) => {
+    if (error instanceof InvalidRequestError) {
+      return reply.code(error.statusCode).send({
+        message: error.message,
+        issues: error.issues,
+      });
+    }
+
+    if (error instanceof UpstreamProviderError) {
+      request.log.error(
+        {
+          err: error.cause ?? error,
+          ...error.logContext,
+        },
+        error.logMessage,
+      );
+
+      return reply.code(error.statusCode).send({
+        message: error.message,
+      });
+    }
+
+    request.log.error({ err: error }, "Request failed unexpectedly.");
+
+    return reply.code(500).send({
+      message: "Internal server error.",
+    });
   });
 
   app.register(registerLocationRoutes, {

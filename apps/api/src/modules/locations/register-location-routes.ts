@@ -5,49 +5,41 @@ import {
   type LocationSearchQuery,
 } from "@weather-app-plus-recommendations/contracts";
 
+import {
+  InvalidRequestError,
+  UpstreamProviderError,
+} from "../../lib/app-errors";
 import { LocationSearchProviderError } from "./fetch-open-meteo-location-results";
 import { searchLocations } from "./search-locations";
 
 export async function registerLocationRoutes(app: FastifyInstance) {
-  app.get<{ Querystring: LocationSearchQuery }>("/search", async (request, reply) => {
+  app.get<{ Querystring: LocationSearchQuery }>("/search", async (request) => {
     const queryResult = locationSearchQuerySchema.safeParse(request.query);
 
     if (!queryResult.success) {
-      return reply.code(400).send({
-        message: "Invalid location search query.",
-        issues: queryResult.error.flatten().fieldErrors,
-      });
+      throw new InvalidRequestError(
+        "Invalid location search query.",
+        queryResult.error.flatten().fieldErrors,
+      );
     }
 
     try {
-      const responseBody = await searchLocations(queryResult.data.q);
-
-      return reply.send(responseBody);
+      return await searchLocations(queryResult.data.q);
     } catch (error) {
       if (error instanceof LocationSearchProviderError) {
-        request.log.error(
-          {
-            err: error,
+        throw new UpstreamProviderError("Location search provider unavailable.", {
+          cause: error,
+          logContext: {
             providerRequestUrl: error.requestUrl,
             providerResponseBody: error.responseBodyText,
             providerStatus: error.status,
             query: queryResult.data.q,
           },
-          "Location search provider request failed.",
-        );
-      } else {
-        request.log.error(
-          {
-            err: error,
-            query: queryResult.data.q,
-          },
-          "Location search failed unexpectedly.",
-        );
+          logMessage: "Location search provider request failed.",
+        });
       }
 
-      return reply.code(502).send({
-        message: "Location search provider unavailable.",
-      });
+      throw error;
     }
   });
 }

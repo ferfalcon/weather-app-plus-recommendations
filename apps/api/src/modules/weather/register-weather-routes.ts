@@ -6,23 +6,22 @@ import {
   type WeatherQuery,
 } from "@weather-app-plus-recommendations/contracts";
 
+import { InvalidRequestError } from "../../lib/app-errors";
 import { buildPlaceholderWeatherPageResponse } from "./build-placeholder-weather-page-response";
 
 export async function registerWeatherRoutes(app: FastifyInstance) {
-  app.get<{ Querystring: WeatherQuery }>("/", async (request, reply) => {
+  app.get<{ Querystring: WeatherQuery }>("/", async (request) => {
     const queryResult = weatherQuerySchema.safeParse(request.query);
 
     if (!queryResult.success) {
-      return reply.code(400).send({
-        message: "Invalid weather query.",
-        issues: queryResult.error.flatten().fieldErrors,
-      });
+      throw new InvalidRequestError(
+        "Invalid weather query.",
+        queryResult.error.flatten().fieldErrors,
+      );
     }
 
-    const responseBody = weatherResponseSchema.parse(
+    return weatherResponseSchema.parse(
       buildPlaceholderWeatherPageResponse(queryResult.data),
     );
-
-    return reply.send(responseBody);
   });
 }
