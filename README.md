@@ -54,6 +54,15 @@ pnpm build
 
 At this phase, `pnpm dev:api` starts the backend on `http://localhost:3001`, and `pnpm dev:web` starts the frontend on `http://127.0.0.1:5173`. The frontend now supports the first end-to-end location search flow through the internal API, while the weather route remains a placeholder scaffold for the next phase.
 
+## API runtime env vars
+
+The API uses small runtime config parsing with sensible local defaults. These optional env vars are supported:
+
+- `HOST` default: `0.0.0.0`
+- `PORT` default: `3001`
+- `LOG_LEVEL` default: `info`
+- `CORS_ORIGINS` comma-separated list, default: `http://127.0.0.1:5173,http://localhost:5173`
+
 ## Reference material
 
 - [project-decisions.md](./project-decisions.md)

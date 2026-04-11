@@ -1,17 +1,17 @@
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
 
+import type { ApiRuntimeConfig } from "../lib/get-server-config";
+
 import { registerLocationRoutes } from "../modules/locations/register-location-routes";
 import { registerWeatherRoutes } from "../modules/weather/register-weather-routes";
 
-const allowedOrigins = new Set([
-  "http://127.0.0.1:5173",
-  "http://localhost:5173",
-]);
-
-export function buildApp() {
+export function buildApp(runtimeConfig: ApiRuntimeConfig) {
+  const allowedOrigins = new Set(runtimeConfig.corsOrigins);
   const app = Fastify({
-    logger: true,
+    logger: {
+      level: runtimeConfig.logLevel,
+    },
   });
 
   app.register(fastifyCors, {

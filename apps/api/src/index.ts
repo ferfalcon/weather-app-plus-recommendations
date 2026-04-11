@@ -2,11 +2,11 @@ import { buildApp } from "./app/build-app";
 import { getServerConfig } from "./lib/get-server-config";
 
 async function start() {
-  const app = buildApp();
-  const serverConfig = getServerConfig();
+  const runtimeConfig = getServerConfig();
+  const app = buildApp(runtimeConfig);
 
   try {
-    await app.listen(serverConfig);
+    await app.listen(runtimeConfig.server);
   } catch (error) {
     app.log.error(error);
     process.exit(1);
