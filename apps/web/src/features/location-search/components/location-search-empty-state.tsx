@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useId, useState, type FormEvent } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import type {
@@ -86,6 +86,8 @@ function getSearchFeedbackMessage(options: {
 }
 
 export function LocationSearchEmptyState() {
+  const searchFeedbackId = useId();
+  const locationResultsMetaId = useId();
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<LocationOption | null>(null);
@@ -193,12 +195,12 @@ export function LocationSearchEmptyState() {
     ? selectedLocation.name
     : lastSuccessfulLocation
       ? lastSuccessfulLocation.name
-      : "What this screen is doing now";
+      : "Choose a place to load weather";
   const statusKicker = selectedLocation
     ? "Selected location"
     : lastSuccessfulLocation
-      ? "Latest loaded location"
-      : "Search-first weather flow";
+      ? "Latest loaded forecast"
+      : "Ready to search";
 
   function submitSearch(nextQuery: string) {
     setSelectedLocation(null);
@@ -259,46 +261,66 @@ export function LocationSearchEmptyState() {
   return (
     <section className={styles.layout}>
       <Surface className={styles.hero}>
-        <p className={styles.kicker}>Phase 2.6 units and day switching</p>
-        <h1 className={styles.heading}>Search, refetch units, switch hourly days.</h1>
+        <p className={styles.kicker}>Search-first weather experience</p>
+        <h1 className={styles.heading}>Search for a place, then read the forecast.</h1>
         <p className={styles.copy}>
-          Location search still runs through the app API, and selecting a match
-          now requests a real normalized weather payload with current conditions,
-          extra metrics, a daily forecast, selectable hourly day detail, and
-          backend-driven unit changes.
+          Search by city, region, or country, choose the right match, then check
+          current conditions, daily outlooks, hourly detail, and practical
+          suggestions without leaving the page.
         </p>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form
+          aria-busy={isSearching}
+          className={styles.form}
+          onSubmit={handleSubmit}
+        >
           <label className={styles.label} htmlFor="location-query">
             Search location
           </label>
 
           <div className={styles.formRow}>
             <Input
+              aria-describedby={searchFeedbackId}
+              enterKeyHint="search"
               id="location-query"
               name="locationQuery"
               placeholder="Try Montevideo, Seoul, or Vancouver"
               required
+              type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
-            <Button disabled={!trimmedQuery || isSearching} type="submit">
+            <Button
+              className={styles.submitButton}
+              disabled={!trimmedQuery || isSearching}
+              type="submit"
+            >
               {isSearching ? "Searching..." : "Search"}
             </Button>
           </div>
 
-          <p aria-live="polite" className={styles.helper} role="status">
+          <p
+            aria-atomic="true"
+            aria-live="polite"
+            className={styles.helper}
+            id={searchFeedbackId}
+            role="status"
+          >
             {searchFeedbackMessage}
           </p>
         </form>
 
         {isSearching ? (
-          <div className={styles.statusPanel}>
+          <div
+            aria-atomic="true"
+            aria-live="polite"
+            className={styles.statusPanel}
+            role="status"
+          >
             <p className={styles.panelKicker}>Search in progress</p>
             <h2 className={styles.panelHeading}>Finding matching locations</h2>
             <p className={styles.panelCopy}>
-              Looking up results for <strong>{submittedQuery}</strong> through
-              the backend geocoding flow.
+              Searching the app API for matches for <strong>{submittedQuery}</strong>.
             </p>
           </div>
         ) : null}
@@ -314,7 +336,12 @@ export function LocationSearchEmptyState() {
         ) : null}
 
         {hasNoResults ? (
-          <div className={styles.noResultsPanel}>
+          <div
+            aria-atomic="true"
+            aria-live="polite"
+            className={styles.noResultsPanel}
+            role="status"
+          >
             <p className={styles.panelKicker}>No matches</p>
             <h2 className={styles.panelHeading}>No locations matched this search</h2>
             <p className={styles.panelCopy}>
@@ -325,7 +352,11 @@ export function LocationSearchEmptyState() {
         ) : null}
 
         {hasSearchResults ? (
-          <section aria-labelledby="location-results-heading" className={styles.resultsSection}>
+          <section
+            aria-describedby={locationResultsMetaId}
+            aria-labelledby="location-results-heading"
+            className={styles.resultsSection}
+          >
             <div className={styles.resultsHeader}>
               <div>
                 <p className={styles.panelKicker}>Choose a location</p>
@@ -333,19 +364,26 @@ export function LocationSearchEmptyState() {
                   Select the right match
                 </h2>
               </div>
-              <p className={styles.resultsMeta}>
+              <p className={styles.resultsMeta} id={locationResultsMetaId}>
                 {locations.length} result
                 {locations.length === 1 ? "" : "s"}
               </p>
             </div>
 
             <ul className={styles.resultsList}>
-              {locations.map((location) => {
+              {locations.map((location, index) => {
                 const isSelected = location.id === selectedLocation?.id;
+                const resultMetaId = `${locationResultsMetaId}-${index}`;
 
                 return (
                   <li key={location.id}>
                     <button
+                      aria-describedby={resultMetaId}
+                      aria-label={
+                        isSelected
+                          ? `${formatLocationLabel(location)}, selected location`
+                          : `Select ${formatLocationLabel(location)}`
+                      }
                       aria-pressed={isSelected}
                       className={`${styles.resultButton} ${
                         isSelected ? styles.resultButtonSelected : ""
@@ -357,12 +395,12 @@ export function LocationSearchEmptyState() {
                         <span className={styles.resultTitle}>
                           {formatLocationLabel(location)}
                         </span>
-                        <span className={styles.resultMetaLine}>
+                        <span className={styles.resultMetaLine} id={resultMetaId}>
                           {location.latitude.toFixed(2)}, {location.longitude.toFixed(2)} ·{" "}
                           {location.timezone}
                         </span>
                       </span>
-                      <span className={styles.resultBadge}>
+                      <span aria-hidden="true" className={styles.resultBadge}>
                         {isSelected ? "Selected" : "Select"}
                       </span>
                     </button>
@@ -374,12 +412,13 @@ export function LocationSearchEmptyState() {
         ) : null}
 
         <div className={styles.samples}>
-          <span className={styles.samplesLabel}>Quick examples</span>
+          <span className={styles.samplesLabel}>Try a quick search</span>
           <div className={styles.sampleList}>
             {sampleLocations.map((location) => (
               <Button
                 key={location}
                 aria-label={`Search for ${location}`}
+                className={styles.sampleButton}
                 variant="secondary"
                 onClick={() => handleSampleLocationClick(location)}
               >
@@ -396,7 +435,12 @@ export function LocationSearchEmptyState() {
 
         {statusLocation ? (
           <div className={styles.selectionCard}>
-            <p className={styles.selectionLabel}>{formatLocationLabel(statusLocation)}</p>
+            <div className={styles.selectionHeader}>
+              <p className={styles.selectionLabel}>{formatLocationLabel(statusLocation)}</p>
+              <span className={styles.selectionBadge}>
+                {selectedLocation ? "Selected now" : "Latest loaded"}
+              </span>
+            </div>
             <dl className={styles.selectionDetails}>
               <div>
                 <dt>Coordinates</dt>
@@ -411,8 +455,8 @@ export function LocationSearchEmptyState() {
             </dl>
             <p className={styles.selectionCopy}>
               {selectedLocation
-                ? "This location and the requested units stay in local UI state while the weather query runs through TanStack Query."
-                : "The last successful weather view stays visible until a new selection or unit change finishes loading."}
+                ? "Weather for this location loads below, and changing units requests a refreshed forecast from the API."
+                : "The last successful forecast stays visible while a new request loads or if the next request fails."}
             </p>
           </div>
         ) : (
@@ -425,14 +469,39 @@ export function LocationSearchEmptyState() {
       </Surface>
 
       {selectedLocation || hasDisplayedWeather ? (
-        <Surface as="section" className={styles.weatherPanel}>
+        <Surface
+          aria-busy={isInitialWeatherLoad || isRefreshingWeather}
+          as="section"
+          className={styles.weatherPanel}
+        >
           {isInitialWeatherLoad ? (
-            <div className={styles.statusPanel}>
+            <div
+              aria-atomic="true"
+              aria-live="polite"
+              className={styles.statusPanel}
+              role="status"
+            >
               <p className={styles.panelKicker}>Weather loading</p>
               <h2 className={styles.panelHeading}>Fetching the forecast</h2>
               <p className={styles.panelCopy}>
                 Loading weather for <strong>{formatLocationLabel(selectedLocation!)}</strong>{" "}
                 through the app API.
+              </p>
+            </div>
+          ) : null}
+
+          {isRefreshingWeather ? (
+            <div
+              aria-atomic="true"
+              aria-live="polite"
+              className={styles.statusPanel}
+              role="status"
+            >
+              <p className={styles.panelKicker}>Refresh in progress</p>
+              <h2 className={styles.panelHeading}>Updating the selected forecast</h2>
+              <p className={styles.panelCopy}>
+                Keeping the last successful forecast visible while we load fresh
+                weather for <strong>{formatLocationLabel(selectedLocation!)}</strong>.
               </p>
             </div>
           ) : null}
@@ -457,11 +526,7 @@ export function LocationSearchEmptyState() {
               onTemperatureUnitChange={handleTemperatureUnitChange}
               onWindUnitChange={handleWindUnitChange}
               selectedUnits={selectedWeatherUnits}
-              title={
-                isShowingCurrentWeather
-                  ? "Live weather from the app API"
-                  : "Latest loaded weather"
-              }
+              title={isShowingCurrentWeather ? "Live weather" : "Latest loaded weather"}
               weather={displayedWeather}
             />
           ) : null}

@@ -2,10 +2,14 @@
   border: 0;
   border-radius: 999px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
   font: inherit;
   font-weight: 700;
+  justify-content: center;
   min-height: 3rem;
   padding: 0.8rem 1.15rem;
+  text-align: center;
   transition:
     background-color 160ms ease,
     border-color 160ms ease,
@@ -21,6 +25,17 @@
 .button:focus-visible {
   outline: 3px solid var(--color-focus-ring);
   outline-offset: 3px;
+}
+
+.button:disabled {
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.62;
+  transform: none;
+}
+
+.button:disabled:hover {
+  transform: none;
 }
 
 .primary {

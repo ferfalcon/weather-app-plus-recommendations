@@ -5,8 +5,13 @@
   border-radius: var(--radius-pill);
   color: var(--color-text-strong);
   font: inherit;
+  line-height: 1.4;
   min-height: 3.4rem;
   padding: 0.95rem 1rem;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
   width: 100%;
 }
 

@@ -1,11 +1,11 @@
 .layout {
   display: grid;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .header {
   display: grid;
-  gap: 0.9rem;
+  gap: 0.75rem;
 }
 
 .kicker,
@@ -26,10 +26,12 @@
   font-family: var(--font-display);
   line-height: 0.98;
   margin: 0;
+  text-wrap: balance;
 }
 
 .heading {
-  font-size: clamp(2rem, 6vw, 3.15rem);
+  font-size: clamp(1.8rem, 7vw, 3.15rem);
+  max-width: 16ch;
 }
 
 .headerMeta {
@@ -64,7 +66,7 @@
   background: linear-gradient(180deg, rgb(255 255 255 / 0.7), rgb(245 249 247 / 0.74));
   border: 1px solid var(--color-border);
   border-radius: calc(var(--radius-xl) - 0.25rem);
-  padding: 1rem;
+  padding: 0.95rem;
 }
 
 .unitsGrid {
@@ -91,6 +93,7 @@
   border: 1px solid var(--color-border);
   border-radius: 1rem;
   color: var(--color-text-strong);
+  font: inherit;
   min-height: 3rem;
   padding: 0.8rem 1rem;
 }
@@ -122,6 +125,7 @@
   align-items: center;
   display: grid;
   gap: 1rem;
+  grid-template-columns: auto minmax(0, 1fr);
 }
 
 .currentIcon,
@@ -139,8 +143,8 @@
   font-size: 0.9rem;
   font-weight: 800;
   letter-spacing: 0.08em;
-  height: 4rem;
-  width: 4rem;
+  height: 3.5rem;
+  width: 3.5rem;
 }
 
 .currentTemperature {
@@ -156,7 +160,7 @@
 
 .metricsGrid {
   display: grid;
-  gap: 0.8rem;
+  gap: 0.7rem;
   margin: 0;
 }
 
@@ -196,7 +200,7 @@
 
 .recommendationsList {
   display: grid;
-  gap: 0.85rem;
+  gap: 0.75rem;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -208,7 +212,7 @@
   border-radius: 1.25rem;
   display: grid;
   gap: 0.75rem;
-  padding: 1rem;
+  padding: 0.95rem;
 }
 
 .recommendationMeta {
@@ -245,7 +249,7 @@
 }
 
 .sectionHeading {
-  font-size: 1.6rem;
+  font-size: 1.45rem;
 }
 
 .dailyList,
@@ -267,8 +271,8 @@
 .dailyCard {
   align-items: center;
   display: grid;
-  gap: 0.9rem;
-  padding: 1rem;
+  gap: 0.75rem;
+  padding: 0.95rem;
 }
 
 .dailyMeta {
@@ -310,14 +314,10 @@
   font-weight: 700;
 }
 
-.hourlyList {
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-}
-
 .daySelector {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
 }
 
 .dayButton {
@@ -328,7 +328,8 @@
   cursor: pointer;
   display: grid;
   gap: 0.2rem;
-  min-width: 8.75rem;
+  min-height: 4rem;
+  min-width: 0;
   padding: 0.8rem 0.95rem;
   text-align: left;
   transition:
@@ -350,7 +351,13 @@
 .dayButtonSelected {
   background: linear-gradient(180deg, rgb(232 247 242 / 0.98), rgb(241 250 246 / 0.95));
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 1px rgb(37 143 123 / 0.2);
+  box-shadow:
+    0 0 0 1px rgb(37 143 123 / 0.2),
+    0 10px 24px rgb(24 130 113 / 0.1);
+}
+
+.dayButtonSelected .dayButtonLabel {
+  color: var(--color-accent-strong);
 }
 
 .dayButtonLabel {
@@ -402,29 +409,41 @@
   color: var(--color-text-muted);
 }
 
+@media (min-width: 30rem) {
+  .hourlyList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (min-width: 40rem) {
+  .metricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 48rem) {
   .unitsGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .currentSummary {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  .metricsGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .recommendationsList {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .dailyCard {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) auto;
   }
+
+  .hourlyList {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (min-width: 70rem) {
+  .layout {
+    gap: 1.25rem;
+  }
+
   .header {
     align-items: end;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -433,5 +452,19 @@
   .headerMeta {
     justify-items: end;
     text-align: right;
+  }
+
+  .controlsSection,
+  .currentSection,
+  .recommendationsSection {
+    padding: 1rem;
+  }
+
+  .recommendationsList {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .hourlyList {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
