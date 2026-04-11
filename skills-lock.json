@@ -5,6 +5,16 @@
       "source": "mcollina/skills",
       "sourceType": "github",
       "computedHash": "269924684709b8c6f50a569ef988e66031efb822ef92cba6c8dfa160e54ed4d4"
+    },
+    "tanstack-query": {
+      "source": "tanstack-skills/tanstack-skills",
+      "sourceType": "github",
+      "computedHash": "b8a0477cd4d7bf8fa54d27f8e64d82388402f0d502591db50a357df5b9995c75"
+    },
+    "tanstack-router": {
+      "source": "tanstack-skills/tanstack-skills",
+      "sourceType": "github",
+      "computedHash": "24beccc4016f91bab65547209cfd849ea5e66f3d5d92820683a9dd84669ced56"
     }
   }
 }

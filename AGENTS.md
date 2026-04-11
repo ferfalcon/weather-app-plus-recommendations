@@ -405,6 +405,29 @@ Priority order:
 SKILLS must not override the locked stack, agreed architecture, or current repo conventions.
 Use them only as framework-specific implementation support.
 
+### TanStack-specific guidance
+
+For installed TanStack SKILLS:
+
+**TanStack Query**
+- Use TanStack Query for server state only.
+- Keep transient UI state local unless it clearly belongs in shared app state.
+- Prefer stable, explicit query keys.
+- Avoid premature abstractions around query factories or cache utilities.
+- Do not add optimistic updates, prefetching, or invalidation complexity unless the feature truly needs them.
+- Preserve prior successful data when that improves UX and matches the product rules.
+
+**TanStack Router**
+- Use TanStack Router for route structure, layouts, and shareable URL state.
+- Put state in search params only when it should be bookmarkable, linkable, or restorable on reload.
+- Do not push ephemeral UI state into the URL just because Router supports it.
+- Keep route files focused and avoid moving feature logic into routes unless routing genuinely owns it.
+
+Rules:
+- TanStack SKILLS must not introduce framework-driven complexity that the current phase does not need.
+- Follow the project’s product rules first, especially around search-first UX, local hourly day switching, and backend-owned data fetching.
+- Prefer the smallest implementation that matches the current repo structure and is easy to explain in an interview.
+
 ---
 
 ## External systems
