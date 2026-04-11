@@ -12,8 +12,7 @@ export async function searchLocations(query: string): Promise<LocationSearchResp
   url.searchParams.set("q", query);
 
   const response = await fetch(url);
-
-  let responseBody: unknown = null;
+  let responseBody: unknown;
 
   try {
     responseBody = await response.json();

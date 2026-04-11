@@ -16,8 +16,7 @@ export async function getWeather(query: WeatherQuery): Promise<WeatherPageRespon
   url.searchParams.set("windUnit", query.windUnit);
 
   const response = await fetch(url);
-
-  let responseBody: unknown = null;
+  let responseBody: unknown;
 
   try {
     responseBody = await response.json();
