@@ -51,16 +51,69 @@
 }
 
 .currentSection,
-.forecastSection {
+.forecastSection,
+.controlsSection {
   display: grid;
   gap: 1rem;
 }
 
+.controlsSection,
 .currentSection {
   background: linear-gradient(180deg, rgb(255 255 255 / 0.7), rgb(245 249 247 / 0.74));
   border: 1px solid var(--color-border);
   border-radius: calc(var(--radius-xl) - 0.25rem);
   padding: 1rem;
+}
+
+.unitsGrid {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.controlField {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.controlLabel {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.unitSelect,
+.unitValue {
+  background: rgb(255 255 255 / 0.84);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  color: var(--color-text-strong);
+  min-height: 3rem;
+  padding: 0.8rem 1rem;
+}
+
+.unitSelect:hover {
+  border-color: var(--color-border-strong);
+}
+
+.unitSelect:focus-visible {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgb(37 143 123 / 0.16);
+  outline: none;
+}
+
+.unitValue {
+  align-items: center;
+  display: flex;
+  font-weight: 700;
+  margin: 0;
+}
+
+.unitsStatus {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin: 0;
 }
 
 .currentSummary {
@@ -203,6 +256,55 @@
   grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
 }
 
+.daySelector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.dayButton {
+  background: rgb(255 255 255 / 0.74);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 0.2rem;
+  min-width: 8.75rem;
+  padding: 0.8rem 0.95rem;
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.dayButton:hover {
+  border-color: var(--color-border-strong);
+  transform: translateY(-1px);
+}
+
+.dayButton:focus-visible {
+  box-shadow: 0 0 0 4px rgb(37 143 123 / 0.16);
+  outline: none;
+}
+
+.dayButtonSelected {
+  background: linear-gradient(180deg, rgb(232 247 242 / 0.98), rgb(241 250 246 / 0.95));
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px rgb(37 143 123 / 0.2);
+}
+
+.dayButtonLabel {
+  color: var(--color-text-strong);
+  font-weight: 700;
+}
+
+.dayButtonDate {
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+}
+
 .hourlyCard {
   display: grid;
   gap: 0.55rem;
@@ -243,6 +345,10 @@
 }
 
 @media (min-width: 40rem) {
+  .unitsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .currentSummary {
     grid-template-columns: auto minmax(0, 1fr);
   }
