@@ -89,6 +89,9 @@ export function LocationSearchEmptyState() {
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<LocationOption | null>(null);
+  const [selectedWeatherUnits, setSelectedWeatherUnits] = useState<
+    Pick<WeatherQuery, "tempUnit" | "windUnit">
+  >(defaultWeatherUnits);
   const [lastSuccessfulLocation, setLastSuccessfulLocation] =
     useState<LocationOption | null>(null);
   const [lastSuccessfulWeather, setLastSuccessfulWeather] =
@@ -106,8 +109,8 @@ export function LocationSearchEmptyState() {
       selectedLocation?.id ?? "idle",
       selectedLocation?.latitude ?? 0,
       selectedLocation?.longitude ?? 0,
-      defaultWeatherUnits.tempUnit,
-      defaultWeatherUnits.windUnit,
+      selectedWeatherUnits.tempUnit,
+      selectedWeatherUnits.windUnit,
     ],
     queryFn: () => {
       if (!selectedLocation) {
@@ -117,8 +120,8 @@ export function LocationSearchEmptyState() {
       return getWeather({
         lat: selectedLocation.latitude,
         lon: selectedLocation.longitude,
-        tempUnit: defaultWeatherUnits.tempUnit,
-        windUnit: defaultWeatherUnits.windUnit,
+        tempUnit: selectedWeatherUnits.tempUnit,
+        windUnit: selectedWeatherUnits.windUnit,
       });
     },
     enabled: selectedLocation !== null,
@@ -227,15 +230,42 @@ export function LocationSearchEmptyState() {
     setSelectedLocation(location);
   }
 
+  function handleTemperatureUnitChange(nextTempUnit: WeatherQuery["tempUnit"]) {
+    setSelectedWeatherUnits((currentUnits) => {
+      if (currentUnits.tempUnit === nextTempUnit) {
+        return currentUnits;
+      }
+
+      return {
+        ...currentUnits,
+        tempUnit: nextTempUnit,
+      };
+    });
+  }
+
+  function handleWindUnitChange(nextWindUnit: WeatherQuery["windUnit"]) {
+    setSelectedWeatherUnits((currentUnits) => {
+      if (currentUnits.windUnit === nextWindUnit) {
+        return currentUnits;
+      }
+
+      return {
+        ...currentUnits,
+        windUnit: nextWindUnit,
+      };
+    });
+  }
+
   return (
     <section className={styles.layout}>
       <Surface className={styles.hero}>
-        <p className={styles.kicker}>Phase 2.5 weather integration</p>
-        <h1 className={styles.heading}>Search, select, load the forecast.</h1>
+        <p className={styles.kicker}>Phase 2.6 units and day switching</p>
+        <h1 className={styles.heading}>Search, refetch units, switch hourly days.</h1>
         <p className={styles.copy}>
           Location search still runs through the app API, and selecting a match
           now requests a real normalized weather payload with current conditions,
-          extra metrics, a daily forecast, and first-day hourly detail.
+          extra metrics, a daily forecast, selectable hourly day detail, and
+          backend-driven unit changes.
         </p>
 
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -381,15 +411,15 @@ export function LocationSearchEmptyState() {
             </dl>
             <p className={styles.selectionCopy}>
               {selectedLocation
-                ? "This location stays in local UI state while the weather query runs through TanStack Query."
-                : "The last successful weather view stays visible until a new selection finishes loading."}
+                ? "This location and the requested units stay in local UI state while the weather query runs through TanStack Query."
+                : "The last successful weather view stays visible until a new selection or unit change finishes loading."}
             </p>
           </div>
         ) : (
           <ul className={styles.checklist}>
             <li>Current weather and extra metrics from the internal API</li>
-            <li>Daily forecast plus first-day hourly detail from normalized data</li>
-            <li>Distinct weather API error handling without rebuilding search</li>
+            <li>Daily forecast plus selectable hourly day detail from normalized data</li>
+            <li>Backend refetches when units change without client-side conversion</li>
           </ul>
         )}
       </Surface>
@@ -424,6 +454,9 @@ export function LocationSearchEmptyState() {
             <WeatherView
               highlightedLocation={displayedWeatherLocation}
               isRefreshing={isRefreshingWeather}
+              onTemperatureUnitChange={handleTemperatureUnitChange}
+              onWindUnitChange={handleWindUnitChange}
+              selectedUnits={selectedWeatherUnits}
               title={
                 isShowingCurrentWeather
                   ? "Live weather from the app API"
