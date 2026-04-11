@@ -2,7 +2,7 @@
 
 Monorepo foundation for a portfolio-quality weather app where weather is the primary experience and AI recommendations are a secondary enhancement.
 
-This repository is being built in small phases. Phase 1 foundation work is now in place: the workspace, shared contracts package, placeholder API skeleton, and frontend scaffold all exist. The current product state is still intentionally limited to a search-first empty frontend and contract-first placeholder backend routes.
+This repository is being built in small phases. The foundation is in place, and the current product state now includes the first real location search flow: backend geocoding, frontend search submit behavior, selectable ambiguous matches, and distinct no-results and API-error states.
 
 ## Planned structure
 
@@ -23,8 +23,8 @@ weather-app-plus-recommendations/
 
 ## Workspace packages
 
-- `apps/api`: Fastify backend skeleton with placeholder app-level routes that validate input and return normalized contract-shaped JSON
-- `apps/web`: React + Vite frontend scaffold with TanStack Router, TanStack Query, global tokens, and the search-first empty state
+- `apps/api`: Fastify backend with normalized app-level routes, including live location search through Open-Meteo geocoding
+- `apps/web`: React + Vite frontend scaffold with TanStack Router, TanStack Query, global tokens, and the search-first location search flow
 - `packages/contracts`: shared Zod schemas and inferred TypeScript types for normalized app-level contracts
 
 ## Current status
@@ -35,9 +35,9 @@ weather-app-plus-recommendations/
 - The contracts package exports the initial location and weather request/response schemas
 - The API package can run a small Fastify server in development
 - The web package can run a small frontend scaffold in development
-- `GET /api/locations/search?q=...` and `GET /api/weather?...` exist as placeholder skeleton routes
-- The frontend currently renders only the empty search-first state and is ready for later feature work
-- Real weather provider integration, Gemini integration, and full search/weather flows are still intentionally out of scope at this phase
+- `GET /api/locations/search?q=...` now calls Open-Meteo geocoding and returns normalized `LocationOption[]` results
+- The frontend supports search submit, loading, no-results, API-error, and ambiguous-result selection states
+- Weather fetching remains placeholder-only, and Gemini integration is still intentionally out of scope at this phase
 
 ## Commands
 
@@ -52,7 +52,7 @@ pnpm test
 pnpm build
 ```
 
-At this phase, `pnpm dev:api` starts the placeholder backend on `http://localhost:3001`, and `pnpm dev:web` starts the frontend scaffold on `http://127.0.0.1:5173`. The frontend currently shows the search-first empty state only, while the backend routes remain deterministic placeholder skeletons.
+At this phase, `pnpm dev:api` starts the backend on `http://localhost:3001`, and `pnpm dev:web` starts the frontend on `http://127.0.0.1:5173`. The frontend now supports the first end-to-end location search flow through the internal API, while the weather route remains a placeholder scaffold for the next phase.
 
 ## Reference material
 

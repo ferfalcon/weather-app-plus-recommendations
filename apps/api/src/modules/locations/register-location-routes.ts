@@ -2,9 +2,10 @@ import type { FastifyInstance } from "fastify";
 
 import {
   locationSearchQuerySchema,
-  locationSearchResponseSchema,
   type LocationSearchQuery,
 } from "@weather-app-plus-recommendations/contracts";
+
+import { searchLocations } from "./search-locations";
 
 export async function registerLocationRoutes(app: FastifyInstance) {
   app.get<{ Querystring: LocationSearchQuery }>("/search", async (request, reply) => {
@@ -17,8 +18,16 @@ export async function registerLocationRoutes(app: FastifyInstance) {
       });
     }
 
-    const responseBody = locationSearchResponseSchema.parse([]);
+    try {
+      const responseBody = await searchLocations(queryResult.data.q);
 
-    return reply.send(responseBody);
+      return reply.send(responseBody);
+    } catch (error) {
+      request.log.error({ error }, "Location search provider request failed.");
+
+      return reply.code(502).send({
+        message: "Location search provider unavailable.",
+      });
+    }
   });
 }
