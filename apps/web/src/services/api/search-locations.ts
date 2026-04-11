@@ -1,4 +1,7 @@
-import type { LocationSearchResponse } from "@weather-app-plus-recommendations/contracts";
+import {
+  locationSearchResponseSchema,
+  type LocationSearchResponse,
+} from "@weather-app-plus-recommendations/contracts";
 
 import { createApiUrl } from "./client";
 
@@ -45,5 +48,5 @@ export async function searchLocations(query: string): Promise<LocationSearchResp
     throw new ApiError(message, response.status);
   }
 
-  return responseBody as LocationSearchResponse;
+  return locationSearchResponseSchema.parse(responseBody);
 }

@@ -62,7 +62,7 @@ function getSearchFeedbackMessage(options: {
 export function LocationSearchEmptyState() {
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
-  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<LocationOption | null>(null);
 
   const locationSearchQuery = useQuery({
     queryKey: ["location-search", submittedQuery],
@@ -71,7 +71,6 @@ export function LocationSearchEmptyState() {
   });
 
   const locations = locationSearchQuery.data ?? [];
-  const selectedLocation = locations.find((location) => location.id === selectedLocationId) ?? null;
   const trimmedQuery = query.trim();
   const isSearching = locationSearchQuery.isPending || locationSearchQuery.isFetching;
   const hasSearchResults = locations.length > 0;
@@ -90,7 +89,7 @@ export function LocationSearchEmptyState() {
   });
 
   function submitSearch(nextQuery: string) {
-    setSelectedLocationId(null);
+    setSelectedLocation(null);
 
     if (nextQuery === submittedQuery) {
       void locationSearchQuery.refetch();
@@ -115,8 +114,8 @@ export function LocationSearchEmptyState() {
     submitSearch(location);
   }
 
-  function handleLocationSelect(locationId: string) {
-    setSelectedLocationId(locationId);
+  function handleLocationSelect(location: LocationOption) {
+    setSelectedLocation(location);
   }
 
   return (
@@ -203,7 +202,7 @@ export function LocationSearchEmptyState() {
 
             <ul className={styles.resultsList}>
               {locations.map((location) => {
-                const isSelected = location.id === selectedLocationId;
+                const isSelected = location.id === selectedLocation?.id;
 
                 return (
                   <li key={location.id}>
@@ -212,7 +211,7 @@ export function LocationSearchEmptyState() {
                       className={`${styles.resultButton} ${
                         isSelected ? styles.resultButtonSelected : ""
                       }`}
-                      onClick={() => handleLocationSelect(location.id)}
+                      onClick={() => handleLocationSelect(location)}
                       type="button"
                     >
                       <span className={styles.resultText}>
