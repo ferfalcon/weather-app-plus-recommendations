@@ -4,7 +4,6 @@ import type {
   WeatherQuery,
 } from "@weather-app-plus-recommendations/contracts";
 
-import { buildFallbackRecommendations } from "../recommendations/build-fallback-recommendations";
 import type { OpenMeteoForecastResponse } from "./fetch-open-meteo-weather-forecast";
 import { mapOpenMeteoWeatherCode } from "./map-open-meteo-weather-code";
 
@@ -52,7 +51,7 @@ export function mapOpenMeteoWeatherResponse({
   forecast,
   location,
   query,
-}: MapWeatherResponseOptions): WeatherPageResponse {
+}: MapWeatherResponseOptions): Omit<WeatherPageResponse, "recommendations"> {
   const current = forecast.current;
 
   if (
@@ -157,12 +156,6 @@ export function mapOpenMeteoWeatherResponse({
     iconKey: currentCondition.iconKey,
     observedAt: current.time,
   };
-  const recommendations = buildFallbackRecommendations({
-    current: mappedCurrentWeather,
-    daily,
-    units,
-  });
-
   return {
     location: {
       ...location,
@@ -173,6 +166,5 @@ export function mapOpenMeteoWeatherResponse({
     units,
     current: mappedCurrentWeather,
     daily,
-    recommendations,
   };
 }

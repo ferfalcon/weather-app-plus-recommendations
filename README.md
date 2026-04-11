@@ -38,7 +38,7 @@ weather-app-plus-recommendations/
 - `GET /api/locations/search?q=...` now calls Open-Meteo geocoding and returns normalized `LocationOption[]` results
 - `GET /api/weather?lat=...&lon=...&tempUnit=...&windUnit=...` now calls Open-Meteo forecast data and returns normalized current, daily, and hourly weather payloads
 - The frontend supports search submit, loading, no-results, ambiguous-result selection, live weather rendering, and distinct weather API error states
-- The weather payload now includes deterministic fallback recommendations, and Gemini integration remains intentionally deferred
+- The weather payload now includes recommendation suggestions in the same response shape, using Gemini when configured and deterministic fallback when it is not
 
 ## Commands
 
@@ -53,7 +53,7 @@ pnpm test
 pnpm build
 ```
 
-At this phase, `pnpm dev:api` starts the backend on `http://localhost:3001`, and `pnpm dev:web` starts the frontend on `http://127.0.0.1:5173`. The frontend now supports the end-to-end location search, live weather flow, and backend-owned fallback suggestions through the internal API, while Gemini recommendation generation remains deferred to a later phase.
+At this phase, `pnpm dev:api` starts the backend on `http://localhost:3001`, and `pnpm dev:web` starts the frontend on `http://127.0.0.1:5173`. The frontend supports the end-to-end location search, live weather flow, and backend-owned recommendation generation through the internal API. If `GEMINI_API_KEY` is absent or Gemini fails validation, the API returns deterministic fallback suggestions in the same payload shape.
 
 ## API runtime env vars
 
@@ -63,6 +63,7 @@ The API uses small runtime config parsing with sensible local defaults. These op
 - `PORT` default: `3001`
 - `LOG_LEVEL` default: `info`
 - `CORS_ORIGINS` comma-separated list, default: `http://127.0.0.1:5173,http://localhost:5173`
+- `GEMINI_API_KEY` optional: enables Gemini-backed recommendation generation; deterministic fallback remains the safety net when the key is absent, Gemini times out, or output validation fails
 
 ## Reference material
 

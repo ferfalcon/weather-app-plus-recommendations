@@ -64,6 +64,7 @@ export function buildApp(runtimeConfig: ApiRuntimeConfig) {
 
   app.register(registerWeatherRoutes, {
     prefix: "/api/weather",
+    runtimeConfig,
   });
 
   return app;
