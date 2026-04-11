@@ -5,20 +5,25 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5173",
     "build": "vite build",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "lint": "pnpm -C ../.. exec eslint apps/web/src apps/web/vite.config.ts apps/web/vitest.config.ts --ext .ts,.tsx",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "pnpm -C ../.. exec vitest run --config apps/web/vitest.config.ts"
   },
   "dependencies": {
-    "@weather-app-plus-recommendations/contracts": "workspace:*",
     "@tanstack/react-query": "^5.97.0",
     "@tanstack/react-router": "^1.168.13",
+    "@weather-app-plus-recommendations/contracts": "workspace:*",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"
   },
   "devDependencies": {
     "@tanstack/router-plugin": "^1.167.12",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "jsdom": "^29.0.2",
     "typescript": "^6.0.2",
     "vite": "^8.0.8"
   }
