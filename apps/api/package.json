@@ -1,5 +1,19 @@
 {
   "name": "@weather-app-plus-recommendations/api",
   "private": true,
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "pnpm --filter @weather-app-plus-recommendations/contracts build && tsc -p tsconfig.json && node dist/index.js",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@weather-app-plus-recommendations/contracts": "workspace:*",
+    "fastify": "^5.8.4"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "typescript": "^6.0.2"
+  }
 }

@@ -23,17 +23,19 @@ weather-app-plus-recommendations/
 
 ## Workspace packages
 
-- `apps/api`: future Fastify backend for weather provider integration, recommendation orchestration, normalization, and validation
+- `apps/api`: Fastify backend skeleton with placeholder app-level routes that validate input and return normalized contract-shaped JSON
 - `apps/web`: future React + Vite frontend that talks only to the internal API
-- `packages/contracts`: future shared package for stable contracts and inferred types used across apps
+- `packages/contracts`: shared Zod schemas and inferred TypeScript types for normalized app-level contracts
 
 ## Current status
 
 - Monorepo workspace wiring is in place with `pnpm`
 - Root verification scripts are defined
 - Shared TypeScript base config is defined for future package-level configs
-- Package directories exist with minimal manifests only
-- No app scaffolding, API routes, frontend scaffold, or contract models have been added yet
+- The contracts package exports the initial location and weather request/response schemas
+- The API package can run a small Fastify server in development
+- `GET /api/locations/search?q=...` and `GET /api/weather?...` exist as placeholder skeleton routes
+- Real weather provider integration, Gemini integration, and frontend scaffolding are still intentionally out of scope at this phase
 
 ## Commands
 
@@ -48,7 +50,7 @@ pnpm test
 pnpm build
 ```
 
-At this phase, the `dev*` commands are forward-compatible workspace entry points and intentionally do nothing until package-level `dev` scripts exist. The verification commands validate the workspace setup and only execute package-level scripts when later phases add them.
+At this phase, `pnpm dev:api` starts the placeholder backend on `http://localhost:3001`. The two current routes are contract-first skeletons with deterministic placeholder responses, not real provider integrations yet.
 
 ## Reference material
 
