@@ -1,15 +1,27 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
 import { useQuery } from "@tanstack/react-query";
-import type { LocationOption } from "@weather-app-plus-recommendations/contracts";
+import type {
+  LocationOption,
+  WeatherPageResponse,
+  WeatherQuery,
+} from "@weather-app-plus-recommendations/contracts";
 
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Surface } from "../../../components/ui/surface";
-import { ApiError, searchLocations } from "../../../services/api/search-locations";
+import { WeatherView } from "../../../features/weather/components/weather-view";
+import { ApiError } from "../../../services/api/api-error";
+import { getWeather } from "../../../services/api/get-weather";
+import { searchLocations } from "../../../services/api/search-locations";
 import styles from "./location-search-empty-state.module.css";
 
 const sampleLocations = ["Montevideo", "Seoul", "Vancouver"];
+
+const defaultWeatherUnits = {
+  tempUnit: "celsius",
+  windUnit: "kmh",
+} satisfies Pick<WeatherQuery, "tempUnit" | "windUnit">;
 
 function formatLocationLabel(location: LocationOption) {
   const regionDetails = location.region
@@ -20,34 +32,48 @@ function formatLocationLabel(location: LocationOption) {
 }
 
 function getSearchFeedbackMessage(options: {
-  submittedQuery: string;
-  selectedLocation: LocationOption | null;
+  hasLocationSearchError: boolean;
+  hasWeatherError: boolean;
+  hasWeatherSuccess: boolean;
   isSearching: boolean;
-  isError: boolean;
+  isWeatherLoading: boolean;
   resultCount: number;
+  selectedLocation: LocationOption | null;
+  submittedQuery: string;
 }) {
   const {
-    submittedQuery,
-    selectedLocation,
+    hasLocationSearchError,
+    hasWeatherError,
+    hasWeatherSuccess,
     isSearching,
-    isError,
+    isWeatherLoading,
     resultCount,
+    selectedLocation,
+    submittedQuery,
   } = options;
 
   if (!submittedQuery) {
     return "Search for a city, region, or country to see matching locations.";
   }
 
-  if (selectedLocation) {
-    return `Selected ${formatLocationLabel(selectedLocation)}. Weather loading comes next.`;
+  if (selectedLocation && isWeatherLoading) {
+    return `Loading weather for ${formatLocationLabel(selectedLocation)}.`;
+  }
+
+  if (selectedLocation && hasWeatherError) {
+    return `Weather loading failed for ${formatLocationLabel(selectedLocation)}.`;
+  }
+
+  if (selectedLocation && hasWeatherSuccess) {
+    return `Showing live weather for ${formatLocationLabel(selectedLocation)}.`;
+  }
+
+  if (hasLocationSearchError) {
+    return `Location search failed for "${submittedQuery}".`;
   }
 
   if (isSearching) {
     return `Searching for matches for "${submittedQuery}"...`;
-  }
-
-  if (isError) {
-    return `Location search failed for "${submittedQuery}".`;
   }
 
   if (resultCount === 0) {
@@ -63,6 +89,10 @@ export function LocationSearchEmptyState() {
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<LocationOption | null>(null);
+  const [lastSuccessfulLocation, setLastSuccessfulLocation] =
+    useState<LocationOption | null>(null);
+  const [lastSuccessfulWeather, setLastSuccessfulWeather] =
+    useState<WeatherPageResponse | null>(null);
 
   const locationSearchQuery = useQuery({
     queryKey: ["location-search", submittedQuery],
@@ -70,9 +100,59 @@ export function LocationSearchEmptyState() {
     enabled: submittedQuery.length > 0,
   });
 
+  const weatherQuery = useQuery({
+    queryKey: [
+      "weather",
+      selectedLocation?.id ?? "idle",
+      selectedLocation?.latitude ?? 0,
+      selectedLocation?.longitude ?? 0,
+      defaultWeatherUnits.tempUnit,
+      defaultWeatherUnits.windUnit,
+    ],
+    queryFn: () => {
+      if (!selectedLocation) {
+        throw new Error("Selected location is required to request weather.");
+      }
+
+      return getWeather({
+        lat: selectedLocation.latitude,
+        lon: selectedLocation.longitude,
+        tempUnit: defaultWeatherUnits.tempUnit,
+        windUnit: defaultWeatherUnits.windUnit,
+      });
+    },
+    enabled: selectedLocation !== null,
+    placeholderData: (previousData) => previousData,
+  });
+
+  useEffect(() => {
+    if (
+      selectedLocation &&
+      weatherQuery.data &&
+      weatherQuery.isSuccess &&
+      !weatherQuery.isPlaceholderData
+    ) {
+      setLastSuccessfulLocation(selectedLocation);
+      setLastSuccessfulWeather(weatherQuery.data);
+    }
+  }, [
+    selectedLocation,
+    weatherQuery.data,
+    weatherQuery.isPlaceholderData,
+    weatherQuery.isSuccess,
+  ]);
+
   const locations = locationSearchQuery.data ?? [];
   const trimmedQuery = query.trim();
   const isSearching = locationSearchQuery.isPending || locationSearchQuery.isFetching;
+  const isInitialWeatherLoad =
+    selectedLocation !== null &&
+    weatherQuery.isPending &&
+    lastSuccessfulWeather === null;
+  const isRefreshingWeather =
+    selectedLocation !== null &&
+    weatherQuery.isFetching &&
+    lastSuccessfulWeather !== null;
   const hasSearchResults = locations.length > 0;
   const hasNoResults =
     submittedQuery.length > 0 && locationSearchQuery.isSuccess && locations.length === 0;
@@ -80,13 +160,42 @@ export function LocationSearchEmptyState() {
     locationSearchQuery.error instanceof ApiError
       ? locationSearchQuery.error.message
       : "Unable to search locations right now.";
+  const weatherErrorMessage =
+    weatherQuery.error instanceof ApiError
+      ? weatherQuery.error.message
+      : "Unable to load weather right now.";
+  const isShowingCurrentWeather =
+    selectedLocation !== null &&
+    weatherQuery.data !== undefined &&
+    !weatherQuery.isPlaceholderData;
+  const displayedWeather = weatherQuery.data ?? lastSuccessfulWeather;
+  const displayedWeatherLocation =
+    isShowingCurrentWeather && selectedLocation
+      ? selectedLocation
+      : lastSuccessfulLocation;
+  const hasDisplayedWeather =
+    displayedWeather != null && displayedWeatherLocation !== null;
   const searchFeedbackMessage = getSearchFeedbackMessage({
     submittedQuery,
     selectedLocation,
     isSearching,
-    isError: locationSearchQuery.isError,
+    hasLocationSearchError: locationSearchQuery.isError,
+    isWeatherLoading: isInitialWeatherLoad || isRefreshingWeather,
+    hasWeatherError: weatherQuery.isError,
+    hasWeatherSuccess: isShowingCurrentWeather,
     resultCount: locations.length,
   });
+  const statusLocation = selectedLocation ?? lastSuccessfulLocation;
+  const statusHeading = selectedLocation
+    ? selectedLocation.name
+    : lastSuccessfulLocation
+      ? lastSuccessfulLocation.name
+      : "What this screen is doing now";
+  const statusKicker = selectedLocation
+    ? "Selected location"
+    : lastSuccessfulLocation
+      ? "Latest loaded location"
+      : "Search-first weather flow";
 
   function submitSearch(nextQuery: string) {
     setSelectedLocation(null);
@@ -121,12 +230,12 @@ export function LocationSearchEmptyState() {
   return (
     <section className={styles.layout}>
       <Surface className={styles.hero}>
-        <p className={styles.kicker}>Phase 2.4 location search</p>
-        <h1 className={styles.heading}>Start with a place.</h1>
+        <p className={styles.kicker}>Phase 2.5 weather integration</p>
+        <h1 className={styles.heading}>Search, select, load the forecast.</h1>
         <p className={styles.copy}>
-          Search for a city, region, or country to unlock weather details and
-          practical recommendations. Search now runs through the app API and
-          keeps ambiguous matches selectable instead of guessing.
+          Location search still runs through the app API, and selecting a match
+          now requests a real normalized weather payload with current conditions,
+          extra metrics, a daily forecast, and first-day hourly detail.
         </p>
 
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -252,41 +361,79 @@ export function LocationSearchEmptyState() {
       </Surface>
 
       <Surface as="aside" className={styles.sidebar}>
-        <p className={styles.sidebarKicker}>
-          {selectedLocation ? "Selected location" : "Ready for next phase"}
-        </p>
-        <h2 className={styles.sidebarHeading}>
-          {selectedLocation ? selectedLocation.name : "What this screen is preparing"}
-        </h2>
+        <p className={styles.sidebarKicker}>{statusKicker}</p>
+        <h2 className={styles.sidebarHeading}>{statusHeading}</h2>
 
-        {selectedLocation ? (
+        {statusLocation ? (
           <div className={styles.selectionCard}>
-            <p className={styles.selectionLabel}>{formatLocationLabel(selectedLocation)}</p>
+            <p className={styles.selectionLabel}>{formatLocationLabel(statusLocation)}</p>
             <dl className={styles.selectionDetails}>
               <div>
                 <dt>Coordinates</dt>
                 <dd>
-                  {selectedLocation.latitude.toFixed(2)}, {selectedLocation.longitude.toFixed(2)}
+                  {statusLocation.latitude.toFixed(2)}, {statusLocation.longitude.toFixed(2)}
                 </dd>
               </div>
               <div>
                 <dt>Timezone</dt>
-                <dd>{selectedLocation.timezone}</dd>
+                <dd>{statusLocation.timezone}</dd>
               </div>
             </dl>
             <p className={styles.selectionCopy}>
-              This selection stays in local UI state for now. The next phase can
-              use it to request the weather payload without guessing.
+              {selectedLocation
+                ? "This location stays in local UI state while the weather query runs through TanStack Query."
+                : "The last successful weather view stays visible until a new selection finishes loading."}
             </p>
           </div>
         ) : (
           <ul className={styles.checklist}>
-            <li>Normalized weather payloads rendered from the internal API</li>
-            <li>Search results and selection flows without guessing locations</li>
-            <li>Secondary activity suggestions layered onto the weather view</li>
+            <li>Current weather and extra metrics from the internal API</li>
+            <li>Daily forecast plus first-day hourly detail from normalized data</li>
+            <li>Distinct weather API error handling without rebuilding search</li>
           </ul>
         )}
       </Surface>
+
+      {selectedLocation || hasDisplayedWeather ? (
+        <Surface as="section" className={styles.weatherPanel}>
+          {isInitialWeatherLoad ? (
+            <div className={styles.statusPanel}>
+              <p className={styles.panelKicker}>Weather loading</p>
+              <h2 className={styles.panelHeading}>Fetching the forecast</h2>
+              <p className={styles.panelCopy}>
+                Loading weather for <strong>{formatLocationLabel(selectedLocation!)}</strong>{" "}
+                through the app API.
+              </p>
+            </div>
+          ) : null}
+
+          {weatherQuery.isError ? (
+            <div className={styles.errorPanel} role="alert">
+              <p className={styles.panelKicker}>Weather error</p>
+              <h2 className={styles.panelHeading}>The API could not load this forecast</h2>
+              <p className={styles.panelCopy}>
+                {weatherErrorMessage}
+                {lastSuccessfulWeather
+                  ? " Showing the last successful weather result while the new request is unavailable."
+                  : " Try selecting the location again in a moment."}
+              </p>
+            </div>
+          ) : null}
+
+          {hasDisplayedWeather ? (
+            <WeatherView
+              highlightedLocation={displayedWeatherLocation}
+              isRefreshing={isRefreshingWeather}
+              title={
+                isShowingCurrentWeather
+                  ? "Live weather from the app API"
+                  : "Latest loaded weather"
+              }
+              weather={displayedWeather}
+            />
+          ) : null}
+        </Surface>
+      ) : null}
     </section>
   );
 }
