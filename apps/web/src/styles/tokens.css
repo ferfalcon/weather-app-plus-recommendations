@@ -3,8 +3,7 @@
   font-family: "Bricolage Grotesque";
   font-style: normal;
   font-weight: 200 800;
-  src: url("../../../frontend-mentor/assets/fonts/Bricolage_Grotesque/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf")
-    format("truetype");
+  src: url("../assets/fonts/bricolage-grotesque-variable.ttf");
 }
 
 @font-face {
@@ -12,8 +11,7 @@
   font-family: "DM Sans";
   font-style: normal;
   font-weight: 100 900;
-  src: url("../../../frontend-mentor/assets/fonts/DM_Sans/DMSans-VariableFont_opsz,wght.ttf")
-    format("truetype");
+  src: url("../assets/fonts/dm-sans-variable.ttf");
 }
 
 :root {
