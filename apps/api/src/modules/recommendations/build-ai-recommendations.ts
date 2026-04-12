@@ -1,5 +1,3 @@
-import { request as httpsRequest } from "node:https";
-
 import {
   activitySuggestionSchema,
   type ForecastDay,
@@ -137,53 +135,19 @@ function requestGeminiRecommendations(
   requestUrl: string,
   requestBodyText: string,
 ): Promise<ProviderHttpResponse> {
-  return new Promise((resolve, reject) => {
-    const url = new URL(requestUrl);
-    const request = httpsRequest(
-      {
-        family: 4,
-        headers: {
-          accept: "application/json",
-          "content-length": Buffer.byteLength(requestBodyText, "utf8"),
-          "content-type": "application/json",
-        },
-        hostname: url.hostname,
-        method: "POST",
-        path: `${url.pathname}${url.search}`,
-        port: url.port || 443,
-        protocol: url.protocol,
-      },
-      (response) => {
-        const chunks: string[] = [];
-
-        response.setEncoding("utf8");
-        response.on("data", (chunk: string) => {
-          chunks.push(chunk);
-        });
-        response.on("end", () => {
-          resolve({
-            bodyText: chunks.join(""),
-            status: response.statusCode,
-          });
-        });
-      },
-    );
-
-    request.setTimeout(geminiRequestTimeoutMs, () => {
-      const timeoutError = new Error(
-        `Gemini request timed out after ${geminiRequestTimeoutMs}ms.`,
-      );
-
-      timeoutError.name = "TimeoutError";
-      request.destroy(timeoutError);
-    });
-
-    request.on("error", (error) => {
-      reject(error);
-    });
-
-    request.write(requestBodyText);
-    request.end();
+  return fetch(requestUrl, {
+    body: requestBodyText,
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+    },
+    method: "POST",
+    signal: AbortSignal.timeout(geminiRequestTimeoutMs),
+  }).then(async (response) => {
+    return {
+      bodyText: await response.text(),
+      status: response.status,
+    };
   });
 }
 
