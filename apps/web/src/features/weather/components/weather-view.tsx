@@ -77,6 +77,28 @@ function formatObservedTime(time: string) {
   return time;
 }
 
+function formatSummaryLocation(location: LocationOption) {
+  return `${location.name}, ${location.country}`;
+}
+
+function formatSummaryDate(date: string | undefined, dayLabel: string | undefined) {
+  if (!date) {
+    return dayLabel ?? "";
+  }
+
+  const parsedDate = new Date(`${date}T00:00:00`);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return dayLabel ? `${dayLabel} · ${date}` : date;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+  }).format(parsedDate);
+}
+
 function formatHourlyTime(time: string) {
   if (time.length >= 16) {
     return time.slice(11, 16);
@@ -134,6 +156,11 @@ export function WeatherView({
 
   const hourlyForecastDay = getHourlyForecastDay(weather.daily, selectedHourlyDayDate);
   const locationLabel = formatLocationLabel(highlightedLocation);
+  const summaryLocationLabel = formatSummaryLocation(highlightedLocation);
+  const summaryDateLabel = formatSummaryDate(
+    weather.daily[0]?.date,
+    weather.daily[0]?.dayLabel,
+  );
   const requestedUnitsMatchWeatherUnits =
     weather.units.temperature === selectedUnits.tempUnit &&
     weather.units.windSpeed === selectedUnits.windUnit;
@@ -141,7 +168,7 @@ export function WeatherView({
   return (
     <div className={styles.layout}>
       <div className={styles.header}>
-        <div>
+        <div className={styles.headerIntro}>
           <p className={styles.kicker}>{title}</p>
           <h2 className={styles.heading}>{locationLabel}</h2>
         </div>
@@ -164,9 +191,11 @@ export function WeatherView({
             <div className={styles.currentCopy}>
               <p className={styles.currentLabel}>Current weather</p>
               <h3 className={styles.currentHeading} id="current-weather-heading">
-                {weather.current.conditionLabel}
+                {summaryLocationLabel}
               </h3>
+              <p className={styles.currentCondition}>{weather.current.conditionLabel}</p>
               <p className={styles.currentContext}>
+                {summaryDateLabel ? `${summaryDateLabel} · ` : ""}
                 Observed at {formatObservedTime(weather.current.observedAt)} in{" "}
                 {highlightedLocation.timezone}
               </p>
