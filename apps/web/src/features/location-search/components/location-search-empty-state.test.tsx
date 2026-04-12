@@ -55,6 +55,18 @@ describe("LocationSearchEmptyState", () => {
     expect(
       screen.queryByText("The API could not load this forecast"),
     ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: "Search",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", {
+        level: 2,
+        name: "Finding matching locations",
+      }),
+    ).not.toBeInTheDocument();
+    expect(searchLocations).not.toHaveBeenCalled();
   });
 
   it("shows the no-results state after a search returns no matches", async () => {

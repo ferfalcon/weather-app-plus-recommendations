@@ -149,7 +149,8 @@ export function LocationSearchEmptyState() {
 
   const locations = locationSearchQuery.data ?? [];
   const trimmedQuery = query.trim();
-  const isSearching = locationSearchQuery.isPending || locationSearchQuery.isFetching;
+  const isSearching =
+    submittedQuery.length > 0 && locationSearchQuery.fetchStatus === "fetching";
   const isInitialWeatherLoad =
     selectedLocation !== null &&
     weatherQuery.isPending &&
