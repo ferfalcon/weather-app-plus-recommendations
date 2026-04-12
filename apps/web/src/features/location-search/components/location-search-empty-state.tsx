@@ -314,6 +314,10 @@ export function LocationSearchEmptyState() {
           onQueryChange={setQuery}
           onSubmit={handleSubmit}
         />
+        <LocationSearchQuickSearches
+          sampleLocations={sampleLocations}
+          onSampleLocationClick={handleSampleLocationClick}
+        />
         <LocationSearchResults
           hasLocationSearchError={locationSearchQuery.isError}
           hasNoResults={hasNoResults}
@@ -324,10 +328,6 @@ export function LocationSearchEmptyState() {
           selectedLocationId={selectedLocation?.id ?? null}
           submittedQuery={submittedQuery}
           onLocationSelect={handleLocationSelect}
-        />
-        <LocationSearchQuickSearches
-          sampleLocations={sampleLocations}
-          onSampleLocationClick={handleSampleLocationClick}
         />
       </Surface>
 

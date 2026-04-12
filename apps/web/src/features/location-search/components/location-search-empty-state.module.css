@@ -12,7 +12,17 @@
 
 .hero {
   display: grid;
-  gap: var(--space-5);
+  gap: var(--space-6);
+  position: relative;
+}
+
+.heroIntro {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: center;
+  margin-inline: auto;
+  max-width: 42rem;
+  text-align: center;
 }
 
 .kicker,
@@ -36,7 +46,7 @@
 .heading {
   font-size: var(--font-size-display);
   letter-spacing: -0.05em;
-  max-width: 10ch;
+  max-width: 11ch;
 }
 
 .sidebarHeading {
@@ -54,22 +64,54 @@
 }
 
 .form {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.02)),
+    rgb(19 23 48 / 0.64);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: calc(var(--radius-xl) + 0.25rem);
+  box-shadow: var(--shadow-raised);
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-4);
+  margin-inline: auto;
+  max-width: 46rem;
+  padding: var(--space-5);
+  width: 100%;
+}
+
+.formHeader {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  justify-content: space-between;
 }
 
 .label {
   color: var(--color-text-strong);
+  font-size: var(--font-size-label);
   font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.formRow {
+.formHint {
+  color: var(--color-text-soft);
+  font-size: var(--font-size-helper);
+  margin: 0;
+}
+
+.searchControls {
   display: grid;
   gap: var(--space-3);
 }
 
+.searchInput {
+  min-height: 4rem;
+}
+
 .submitButton {
   width: 100%;
+  min-height: 4rem;
 }
 
 .helper {
@@ -77,7 +119,8 @@
   font-size: var(--font-size-helper);
   line-height: var(--line-height-body);
   margin: 0;
-  min-height: 2.8rem;
+  min-height: 0;
+  text-align: center;
 }
 
 .statusPanel,
@@ -145,6 +188,7 @@
 
 .resultsSection {
   gap: 0.9rem;
+  margin-top: 0.15rem;
 }
 
 .resultsHeader {
@@ -251,8 +295,10 @@
 }
 
 .samples {
+  align-items: center;
   display: grid;
   gap: 0.75rem;
+  justify-items: center;
 }
 
 .samplesLabel {
@@ -265,6 +311,8 @@
   display: grid;
   gap: 0.65rem;
   grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  max-width: 38rem;
+  width: 100%;
 }
 
 .sampleButton {
@@ -273,12 +321,18 @@
 
 .sidebar {
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
+  align-content: start;
+}
+
+.sidebarIntro {
+  display: grid;
+  gap: 0.5rem;
 }
 
 .weatherPanel {
   display: grid;
-  gap: 0.85rem;
+  gap: 1rem;
 }
 
 .selectionCard {
@@ -286,6 +340,7 @@
   background:
     linear-gradient(180deg, rgb(94 112 255 / 0.14), rgb(255 255 255 / 0.02)),
     var(--color-surface-muted);
+  padding: var(--space-6);
 }
 
 .selectionHeader {
@@ -346,11 +401,17 @@
 }
 
 .checklist {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.02)),
+    var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-raised);
   color: var(--color-text);
   display: grid;
   gap: 0.75rem;
   margin: 0;
-  padding-left: 1.2rem;
+  padding: var(--space-5) var(--space-5) var(--space-5) 2.35rem;
 }
 
 .checklist li::marker {
@@ -362,6 +423,10 @@
   .sidebar,
   .weatherPanel {
     padding: var(--space-6);
+  }
+
+  .form {
+    padding: 1.45rem;
   }
 
   .selectionDetails {
@@ -382,13 +447,14 @@
 }
 
 @media (min-width: 48rem) {
-  .formRow {
+  .searchControls {
     align-items: end;
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .submitButton {
     width: auto;
+    min-width: 10rem;
   }
 
   .resultsHeader {
@@ -397,6 +463,10 @@
 
   .resultsList {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sidebar {
+    min-height: 100%;
   }
 }
 
@@ -412,6 +482,10 @@
   .sidebar,
   .weatherPanel {
     padding: 1.65rem;
+  }
+
+  .hero {
+    gap: 1.4rem;
   }
 
   .weatherPanel {
@@ -430,6 +504,14 @@
   .sidebar,
   .weatherPanel {
     padding: 1.85rem;
+  }
+
+  .heroIntro {
+    max-width: 46rem;
+  }
+
+  .heading {
+    max-width: 12ch;
   }
 
   .weatherPanel {

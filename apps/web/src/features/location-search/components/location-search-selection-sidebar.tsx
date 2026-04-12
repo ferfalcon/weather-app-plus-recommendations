@@ -18,8 +18,10 @@ export function LocationSearchSelectionSidebar({
 }: LocationSearchSelectionSidebarProps) {
   return (
     <>
-      <p className={styles.sidebarKicker}>{statusKicker}</p>
-      <h2 className={styles.sidebarHeading}>{statusHeading}</h2>
+      <div className={styles.sidebarIntro}>
+        <p className={styles.sidebarKicker}>{statusKicker}</p>
+        <h2 className={styles.sidebarHeading}>{statusHeading}</h2>
+      </div>
 
       {statusLocation ? (
         <div className={styles.selectionCard}>

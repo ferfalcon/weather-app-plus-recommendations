@@ -133,6 +133,7 @@ export function WeatherView({
   ]);
 
   const hourlyForecastDay = getHourlyForecastDay(weather.daily, selectedHourlyDayDate);
+  const locationLabel = formatLocationLabel(highlightedLocation);
   const requestedUnitsMatchWeatherUnits =
     weather.units.temperature === selectedUnits.tempUnit &&
     weather.units.windSpeed === selectedUnits.windUnit;
@@ -142,7 +143,7 @@ export function WeatherView({
       <div className={styles.header}>
         <div>
           <p className={styles.kicker}>{title}</p>
-          <h2 className={styles.heading}>{formatLocationLabel(highlightedLocation)}</h2>
+          <h2 className={styles.heading}>{locationLabel}</h2>
         </div>
         <div className={styles.headerMeta}>
           <p className={styles.timezone}>Timezone: {highlightedLocation.timezone}</p>
@@ -157,95 +158,106 @@ export function WeatherView({
         </div>
       </div>
 
-      <section className={styles.controlsSection} aria-labelledby="forecast-display-heading">
-        <div className={styles.sectionHeader}>
-          <p className={styles.sectionKicker}>Forecast display</p>
-          <h3 className={styles.sectionHeading} id="forecast-display-heading">
-            Units
-          </h3>
-        </div>
+      <div className={styles.topGrid}>
+        <section className={styles.currentSection} aria-labelledby="current-weather-heading">
+          <div className={styles.currentSummary}>
+            <div className={styles.currentCopy}>
+              <p className={styles.currentLabel}>Current weather</p>
+              <h3 className={styles.currentHeading} id="current-weather-heading">
+                {weather.current.conditionLabel}
+              </h3>
+              <p className={styles.currentContext}>
+                Observed at {formatObservedTime(weather.current.observedAt)} in{" "}
+                {highlightedLocation.timezone}
+              </p>
+            </div>
 
-        <div className={styles.unitsGrid}>
-          <label className={styles.controlField}>
-            <span className={styles.controlLabel}>Temperature</span>
-            <select
-              className={styles.unitSelect}
-              value={selectedUnits.tempUnit}
-              onChange={(event) =>
-                onTemperatureUnitChange(event.target.value as WeatherQuery["tempUnit"])
-              }
-            >
-              <option value="celsius">Celsius (°C)</option>
-              <option value="fahrenheit">Fahrenheit (°F)</option>
-            </select>
-          </label>
-
-          <label className={styles.controlField}>
-            <span className={styles.controlLabel}>Wind speed</span>
-            <select
-              className={styles.unitSelect}
-              value={selectedUnits.windUnit}
-              onChange={(event) =>
-                onWindUnitChange(event.target.value as WeatherQuery["windUnit"])
-              }
-            >
-              <option value="kmh">Kilometers per hour (km/h)</option>
-              <option value="mph">Miles per hour (mph)</option>
-            </select>
-          </label>
-
-          <div className={styles.controlField}>
-            <span className={styles.controlLabel}>Precipitation</span>
-            <p className={styles.unitValue}>Millimeters (mm)</p>
+            <div className={styles.currentFigure}>
+              <span className={styles.currentIcon} aria-hidden="true">
+                {getWeatherIconGlyph(weather.current.iconKey)}
+              </span>
+              <p className={styles.currentTemperature}>
+                {formatTemperature(weather.current.temperature, weather.units.temperature)}
+              </p>
+            </div>
           </div>
-        </div>
 
-        <p aria-live="polite" className={styles.unitsStatus} role="status">
-          {requestedUnitsMatchWeatherUnits
-            ? `Forecast values are shown in ${formatTemperatureUnitLabel(
-                weather.units.temperature,
-              )}, ${formatWindUnitLabel(weather.units.windSpeed)}, and millimeters for precipitation.`
-            : `Requested ${formatTemperatureUnitLabel(
-                selectedUnits.tempUnit,
-              )} and ${formatWindUnitLabel(
-                selectedUnits.windUnit,
-              )}. The cards below keep the last successful forecast visible until the refreshed values arrive.`}
-        </p>
-      </section>
+          <dl className={styles.metricsGrid}>
+            <div className={styles.metricCard}>
+              <dt>Feels like</dt>
+              <dd>{formatTemperature(weather.current.feelsLike, weather.units.temperature)}</dd>
+            </div>
+            <div className={styles.metricCard}>
+              <dt>Humidity</dt>
+              <dd>{weather.current.humidity}%</dd>
+            </div>
+            <div className={styles.metricCard}>
+              <dt>Wind speed</dt>
+              <dd>{formatWindSpeed(weather.current.windSpeed, weather.units.windSpeed)}</dd>
+            </div>
+            <div className={styles.metricCard}>
+              <dt>Precipitation</dt>
+              <dd>{formatPrecipitation(weather.current.precipitation)}</dd>
+            </div>
+          </dl>
+        </section>
 
-      <section className={styles.currentSection} aria-labelledby="current-weather-heading">
-        <div className={styles.currentSummary}>
-          <span className={styles.currentIcon} aria-hidden="true">
-            {getWeatherIconGlyph(weather.current.iconKey)}
-          </span>
-          <div>
-            <p className={styles.currentLabel}>Current weather</p>
-            <h3 className={styles.currentTemperature} id="current-weather-heading">
-              {formatTemperature(weather.current.temperature, weather.units.temperature)}
+        <section className={styles.controlsSection} aria-labelledby="forecast-display-heading">
+          <div className={styles.sectionHeader}>
+            <p className={styles.sectionKicker}>Forecast display</p>
+            <h3 className={styles.sectionHeading} id="forecast-display-heading">
+              Units
             </h3>
-            <p className={styles.currentCondition}>{weather.current.conditionLabel}</p>
           </div>
-        </div>
 
-        <dl className={styles.metricsGrid}>
-          <div className={styles.metricCard}>
-            <dt>Feels like</dt>
-            <dd>{formatTemperature(weather.current.feelsLike, weather.units.temperature)}</dd>
+          <div className={styles.unitsGrid}>
+            <label className={styles.controlField}>
+              <span className={styles.controlLabel}>Temperature</span>
+              <select
+                className={styles.unitSelect}
+                value={selectedUnits.tempUnit}
+                onChange={(event) =>
+                  onTemperatureUnitChange(event.target.value as WeatherQuery["tempUnit"])
+                }
+              >
+                <option value="celsius">Celsius (°C)</option>
+                <option value="fahrenheit">Fahrenheit (°F)</option>
+              </select>
+            </label>
+
+            <label className={styles.controlField}>
+              <span className={styles.controlLabel}>Wind speed</span>
+              <select
+                className={styles.unitSelect}
+                value={selectedUnits.windUnit}
+                onChange={(event) =>
+                  onWindUnitChange(event.target.value as WeatherQuery["windUnit"])
+                }
+              >
+                <option value="kmh">Kilometers per hour (km/h)</option>
+                <option value="mph">Miles per hour (mph)</option>
+              </select>
+            </label>
+
+            <div className={styles.controlField}>
+              <span className={styles.controlLabel}>Precipitation</span>
+              <p className={styles.unitValue}>Millimeters (mm)</p>
+            </div>
           </div>
-          <div className={styles.metricCard}>
-            <dt>Humidity</dt>
-            <dd>{weather.current.humidity}%</dd>
-          </div>
-          <div className={styles.metricCard}>
-            <dt>Wind speed</dt>
-            <dd>{formatWindSpeed(weather.current.windSpeed, weather.units.windSpeed)}</dd>
-          </div>
-          <div className={styles.metricCard}>
-            <dt>Precipitation</dt>
-            <dd>{formatPrecipitation(weather.current.precipitation)}</dd>
-          </div>
-        </dl>
-      </section>
+
+          <p aria-live="polite" className={styles.unitsStatus} role="status">
+            {requestedUnitsMatchWeatherUnits
+              ? `Forecast values are shown in ${formatTemperatureUnitLabel(
+                  weather.units.temperature,
+                )}, ${formatWindUnitLabel(weather.units.windSpeed)}, and millimeters for precipitation.`
+              : `Requested ${formatTemperatureUnitLabel(
+                  selectedUnits.tempUnit,
+                )} and ${formatWindUnitLabel(
+                  selectedUnits.windUnit,
+                )}. The cards below keep the last successful forecast visible until the refreshed values arrive.`}
+          </p>
+        </section>
+      </div>
 
       <section
         className={styles.recommendationsSection}

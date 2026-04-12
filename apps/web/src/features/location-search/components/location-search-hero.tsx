@@ -27,22 +27,28 @@ export function LocationSearchHero({
 }: LocationSearchHeroProps) {
   return (
     <>
-      <p className={styles.kicker}>Search-first weather experience</p>
-      <h1 className={styles.heading}>Search for a place, then read the forecast.</h1>
-      <p className={styles.copy}>
-        Search by city, region, or country, choose the right match, then check
-        current conditions, daily outlooks, hourly detail, and practical
-        suggestions without leaving the page.
-      </p>
+      <div className={styles.heroIntro}>
+        <p className={styles.kicker}>Search-first weather experience</p>
+        <h1 className={styles.heading}>Search for a place, then read the forecast.</h1>
+        <p className={styles.copy}>
+          Search by city, region, or country, choose the right match, then check
+          current conditions, daily outlooks, hourly detail, and practical
+          suggestions without leaving the page.
+        </p>
+      </div>
 
       <form aria-busy={isSearching} className={styles.form} onSubmit={onSubmit}>
-        <label className={styles.label} htmlFor={inputId}>
-          Search location
-        </label>
+        <div className={styles.formHeader}>
+          <label className={styles.label} htmlFor={inputId}>
+            Search location
+          </label>
+          <p className={styles.formHint}>City, region, or country</p>
+        </div>
 
-        <div className={styles.formRow}>
+        <div className={styles.searchControls}>
           <Input
             aria-describedby={searchFeedbackId}
+            className={styles.searchInput}
             enterKeyHint="search"
             id={inputId}
             name="locationQuery"
