@@ -12,14 +12,18 @@
 
 html {
   background:
-    radial-gradient(circle at top center, rgb(255 255 255 / 0.84), transparent 35%),
-    linear-gradient(180deg, var(--color-page), var(--color-page-deep));
+    radial-gradient(circle at top center, rgb(88 104 255 / 0.16), transparent 28%),
+    linear-gradient(180deg, var(--color-page-deep), var(--color-page));
+  min-height: 100%;
 }
 
 body {
   background:
-    radial-gradient(circle at top left, rgb(237 183 101 / 0.14), transparent 28%),
-    linear-gradient(180deg, var(--color-page), var(--color-page-deep));
+    radial-gradient(circle at 18% 12%, rgb(255 152 56 / 0.12), transparent 18%),
+    radial-gradient(circle at 78% 8%, rgb(94 112 255 / 0.16), transparent 24%),
+    radial-gradient(circle at 50% 100%, rgb(60 77 178 / 0.18), transparent 30%),
+    linear-gradient(180deg, var(--color-page-deep), var(--color-page), var(--color-page-bottom));
+  color: var(--color-text);
 }
 
 body,
@@ -29,6 +33,7 @@ body,
 
 body {
   min-width: 20rem;
+  overflow-x: hidden;
 }
 
 a {
@@ -37,19 +42,37 @@ a {
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font-family: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.03em;
+}
+
+#root {
+  isolation: isolate;
 }
 
 button:focus-visible,
 input:focus-visible,
+select:focus-visible,
 a:focus-visible {
-  outline: 3px solid var(--color-focus-ring);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 3px;
 }
 
 ::selection {
-  background: rgb(45 143 121 / 0.2);
+  background: rgb(78 99 246 / 0.32);
+  color: var(--color-text-strong);
 }
 
 @media (prefers-reduced-motion: reduce) {
