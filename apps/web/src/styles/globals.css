@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
   color: var(--color-text);
   font-family: var(--font-body);
@@ -24,6 +30,7 @@ body {
     radial-gradient(circle at 50% 100%, rgb(60 77 178 / 0.18), transparent 30%),
     linear-gradient(180deg, var(--color-page-deep), var(--color-page), var(--color-page-bottom));
   color: var(--color-text);
+  margin: 0;
 }
 
 body,
@@ -46,6 +53,7 @@ input,
 select,
 textarea {
   font-family: inherit;
+  line-height: inherit;
 }
 
 h1,
