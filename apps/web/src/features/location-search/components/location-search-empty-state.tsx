@@ -1,6 +1,7 @@
-import { useEffect, useId, useState, type FormEvent } from "react";
+import { useEffect, useId, useMemo, useState, type FormEvent } from "react";
 
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import type {
   LocationOption,
   WeatherPageResponse,
@@ -14,14 +15,13 @@ import { WeatherView } from "../../../features/weather/components/weather-view";
 import { ApiError } from "../../../services/api/api-error";
 import { getWeather } from "../../../services/api/get-weather";
 import { searchLocations } from "../../../services/api/search-locations";
+import {
+  buildSelectedLocationFromSearch,
+  type LocationSearchPageSearch,
+} from "../location-search-page-search";
 import styles from "./location-search-empty-state.module.css";
 
 const sampleLocations = ["Montevideo", "Seoul", "Vancouver"];
-
-const defaultWeatherUnits = {
-  tempUnit: "celsius",
-  windUnit: "kmh",
-} satisfies Pick<WeatherQuery, "tempUnit" | "windUnit">;
 
 function formatLocationLabel(location: LocationOption) {
   const regionDetails = location.region
@@ -86,18 +86,39 @@ function getSearchFeedbackMessage(options: {
 }
 
 export function LocationSearchEmptyState() {
+  const navigate = useNavigate({ from: "/" });
+  const routeSearch = useSearch({ from: "/" });
   const searchFeedbackId = useId();
   const locationResultsMetaId = useId();
-  const [query, setQuery] = useState("");
-  const [submittedQuery, setSubmittedQuery] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState<LocationOption | null>(null);
-  const [selectedWeatherUnits, setSelectedWeatherUnits] = useState<
-    Pick<WeatherQuery, "tempUnit" | "windUnit">
-  >(defaultWeatherUnits);
+  const submittedQuery = routeSearch.q ?? "";
+  const selectedLocation = useMemo(() => {
+    return buildSelectedLocationFromSearch(routeSearch);
+  }, [
+    routeSearch.country,
+    routeSearch.lat,
+    routeSearch.locationId,
+    routeSearch.lon,
+    routeSearch.name,
+    routeSearch.region,
+    routeSearch.timezone,
+  ]);
+  const selectedWeatherUnits = useMemo(
+    () =>
+      ({
+        tempUnit: routeSearch.tempUnit,
+        windUnit: routeSearch.windUnit,
+      }) satisfies Pick<WeatherQuery, "tempUnit" | "windUnit">,
+    [routeSearch.tempUnit, routeSearch.windUnit],
+  );
+  const [query, setQuery] = useState(submittedQuery);
   const [lastSuccessfulLocation, setLastSuccessfulLocation] =
     useState<LocationOption | null>(null);
   const [lastSuccessfulWeather, setLastSuccessfulWeather] =
     useState<WeatherPageResponse | null>(null);
+
+  useEffect(() => {
+    setQuery(submittedQuery);
+  }, [submittedQuery]);
 
   const locationSearchQuery = useQuery({
     queryKey: ["location-search", submittedQuery],
@@ -203,15 +224,31 @@ export function LocationSearchEmptyState() {
       ? "Latest loaded forecast"
       : "Ready to search";
 
+  function updateRouteSearch(
+    updater: (previousSearch: LocationSearchPageSearch) => LocationSearchPageSearch,
+  ) {
+    void navigate({
+      replace: true,
+      search: (previousSearch) => updater(previousSearch),
+      to: "/",
+    });
+  }
+
+  function clearSelectedLocation(nextQuery: string) {
+    updateRouteSearch((previousSearch) => ({
+      tempUnit: previousSearch.tempUnit,
+      windUnit: previousSearch.windUnit,
+      q: nextQuery,
+    }));
+  }
+
   function submitSearch(nextQuery: string) {
-    setSelectedLocation(null);
+    clearSelectedLocation(nextQuery);
 
     if (nextQuery === submittedQuery) {
       void locationSearchQuery.refetch();
       return;
     }
-
-    setSubmittedQuery(nextQuery);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -230,30 +267,40 @@ export function LocationSearchEmptyState() {
   }
 
   function handleLocationSelect(location: LocationOption) {
-    setSelectedLocation(location);
+    updateRouteSearch((previousSearch) => ({
+      ...previousSearch,
+      country: location.country,
+      lat: location.latitude,
+      locationId: location.id,
+      lon: location.longitude,
+      name: location.name,
+      q: submittedQuery,
+      timezone: location.timezone,
+      ...(location.region ? { region: location.region } : {}),
+    }));
   }
 
   function handleTemperatureUnitChange(nextTempUnit: WeatherQuery["tempUnit"]) {
-    setSelectedWeatherUnits((currentUnits) => {
-      if (currentUnits.tempUnit === nextTempUnit) {
-        return currentUnits;
-      }
+    if (selectedWeatherUnits.tempUnit === nextTempUnit) {
+      return;
+    }
 
+    updateRouteSearch((previousSearch) => {
       return {
-        ...currentUnits,
+        ...previousSearch,
         tempUnit: nextTempUnit,
       };
     });
   }
 
   function handleWindUnitChange(nextWindUnit: WeatherQuery["windUnit"]) {
-    setSelectedWeatherUnits((currentUnits) => {
-      if (currentUnits.windUnit === nextWindUnit) {
-        return currentUnits;
-      }
+    if (selectedWeatherUnits.windUnit === nextWindUnit) {
+      return;
+    }
 
+    updateRouteSearch((previousSearch) => {
       return {
-        ...currentUnits,
+        ...previousSearch,
         windUnit: nextWindUnit,
       };
     });

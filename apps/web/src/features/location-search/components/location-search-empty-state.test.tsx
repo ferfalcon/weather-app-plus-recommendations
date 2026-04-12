@@ -13,15 +13,14 @@ import { ApiError } from "../../../services/api/api-error";
 import { getWeather } from "../../../services/api/get-weather";
 import { searchLocations } from "../../../services/api/search-locations";
 import { createWeatherPageResponse, testLocation } from "../../../test/fixtures";
-import { renderWithQueryClient } from "../../../test/render-with-query-client";
-import { LocationSearchEmptyState } from "./location-search-empty-state";
+import { renderWithAppRouter } from "../../../test/render-with-app-router";
 
 afterEach(() => {
   vi.clearAllMocks();
 });
 
-function renderLocationSearchEmptyState() {
-  return renderWithQueryClient(<LocationSearchEmptyState />);
+async function renderLocationSearchEmptyState(options?: { initialEntries?: string[] }) {
+  return renderWithAppRouter(options);
 }
 
 function submitSearch(query: string) {
@@ -34,11 +33,11 @@ function submitSearch(query: string) {
 }
 
 describe("LocationSearchEmptyState", () => {
-  it("renders the empty first-load search-first state", () => {
-    renderLocationSearchEmptyState();
+  it("renders the empty first-load search-first state", async () => {
+    await renderLocationSearchEmptyState();
 
     expect(
-      screen.getByRole("heading", {
+      await screen.findByRole("heading", {
         level: 1,
         name: "Search for a place, then read the forecast.",
       }),
@@ -72,7 +71,7 @@ describe("LocationSearchEmptyState", () => {
   it("shows the no-results state after a search returns no matches", async () => {
     vi.mocked(searchLocations).mockResolvedValue([]);
 
-    renderLocationSearchEmptyState();
+    await renderLocationSearchEmptyState();
 
     submitSearch("Atlantis");
 
@@ -87,8 +86,9 @@ describe("LocationSearchEmptyState", () => {
 
   it("marks the selected location button as pressed", async () => {
     vi.mocked(searchLocations).mockResolvedValue([testLocation]);
+    vi.mocked(getWeather).mockResolvedValue(createWeatherPageResponse());
 
-    renderLocationSearchEmptyState();
+    await renderLocationSearchEmptyState();
 
     submitSearch("Montevideo");
 
@@ -100,7 +100,9 @@ describe("LocationSearchEmptyState", () => {
 
     fireEvent.click(locationResultButton);
 
-    expect(locationResultButton).toHaveAttribute("aria-pressed", "true");
+    await waitFor(() => {
+      expect(locationResultButton).toHaveAttribute("aria-pressed", "true");
+    });
   });
 
   it("shows the weather API error state after selecting a location", async () => {
@@ -109,7 +111,7 @@ describe("LocationSearchEmptyState", () => {
       new ApiError("Unable to load weather right now.", 502),
     );
 
-    renderLocationSearchEmptyState();
+    await renderLocationSearchEmptyState();
 
     submitSearch("Montevideo");
 
@@ -140,7 +142,7 @@ describe("LocationSearchEmptyState", () => {
     vi.mocked(searchLocations).mockResolvedValue([testLocation]);
     vi.mocked(getWeather).mockResolvedValue(createWeatherPageResponse());
 
-    renderLocationSearchEmptyState();
+    await renderLocationSearchEmptyState();
 
     submitSearch("Montevideo");
 
@@ -157,5 +159,29 @@ describe("LocationSearchEmptyState", () => {
       }),
     ).toBeInTheDocument();
     expect(screen.getByText("Plan an indoor museum stop")).toBeInTheDocument();
+  });
+
+  it("restores the selected forecast from route search params after a reload", async () => {
+    vi.mocked(searchLocations).mockResolvedValue([testLocation]);
+    vi.mocked(getWeather).mockResolvedValue(createWeatherPageResponse());
+
+    await renderLocationSearchEmptyState({
+      initialEntries: [
+        "/?q=Montevideo&locationId=montevideo-uy&name=Montevideo&country=Uruguay&region=Montevideo%20Department&timezone=America%2FMontevideo&lat=-34.9&lon=-56.16&tempUnit=celsius&windUnit=kmh",
+      ],
+    });
+
+    expect(
+      await screen.findByRole("heading", {
+        level: 2,
+        name: "Montevideo, Montevideo Department, Uruguay",
+      }),
+    ).toBeInTheDocument();
+    expect(getWeather).toHaveBeenCalledWith({
+      lat: -34.9,
+      lon: -56.16,
+      tempUnit: "celsius",
+      windUnit: "kmh",
+    });
   });
 });
