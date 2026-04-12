@@ -71,13 +71,13 @@
   --radius-pill: 999px;
 
   --shadow-surface:
-    0 24px 70px rgb(2 5 26 / 0.5),
+    0 22px 60px rgb(2 5 26 / 0.44),
     inset 0 1px 0 rgb(255 255 255 / 0.06);
   --shadow-raised:
-    0 14px 38px rgb(2 5 26 / 0.34),
+    0 12px 30px rgb(2 5 26 / 0.28),
     inset 0 1px 0 rgb(255 255 255 / 0.04);
-  --shadow-accent: 0 18px 42px rgb(78 99 246 / 0.34);
-  --shadow-focus: 0 0 0 4px rgb(78 99 246 / 0.24);
+  --shadow-accent: 0 16px 34px rgb(78 99 246 / 0.28);
+  --shadow-focus: 0 0 0 3px rgb(78 99 246 / 0.22);
 
   --control-height: 3.5rem;
   --control-padding-inline: 1rem;
