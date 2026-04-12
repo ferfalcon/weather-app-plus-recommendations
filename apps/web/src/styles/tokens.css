@@ -15,28 +15,76 @@
 }
 
 :root {
+  color-scheme: dark;
+
   --font-display: "Bricolage Grotesque", sans-serif;
   --font-body: "DM Sans", sans-serif;
 
-  --color-page: #f5f7f2;
-  --color-page-deep: #dfebe8;
-  --color-surface: rgb(255 255 255 / 0.78);
-  --color-surface-muted: rgb(245 248 246 / 0.92);
-  --color-border: rgb(18 37 37 / 0.12);
-  --color-border-strong: rgb(18 37 37 / 0.2);
-  --color-text-strong: #112728;
-  --color-text: #264345;
-  --color-text-muted: #5f7576;
-  --color-text-soft: #738788;
-  --color-accent: #2d8f79;
-  --color-accent-strong: #176d5d;
-  --color-accent-contrast: #effffb;
-  --color-focus-ring: rgb(236 137 60 / 0.7);
+  --color-page: #040617;
+  --color-page-deep: #090b2c;
+  --color-page-bottom: #050714;
+  --color-surface: rgb(28 32 60 / 0.86);
+  --color-surface-strong: rgb(37 40 71 / 0.96);
+  --color-surface-muted: rgb(47 51 87 / 0.74);
+  --color-surface-soft: rgb(255 255 255 / 0.04);
+  --color-border: rgb(255 255 255 / 0.08);
+  --color-border-strong: rgb(255 255 255 / 0.15);
+  --color-text-strong: #fcfcff;
+  --color-text: #d8ddfb;
+  --color-text-muted: #a9afd6;
+  --color-text-soft: #7f87b7;
+  --color-accent: #4e63f6;
+  --color-accent-strong: #6e7cff;
+  --color-accent-contrast: #f8f9ff;
+  --color-warm: #ff9838;
+  --color-focus-ring: rgb(126 145 255 / 0.78);
+  --color-danger: #ff8f8a;
+  --color-warning: #ffc15d;
 
+  --font-size-body: 1rem;
+  --font-size-body-lg: 1.125rem;
+  --font-size-label: 0.78rem;
+  --font-size-helper: 0.94rem;
+  --font-size-heading-sm: 1.45rem;
+  --font-size-heading-md: 2rem;
+  --font-size-heading-lg: clamp(2.75rem, 8vw, 4.65rem);
+  --font-size-display: clamp(3.1rem, 11vw, 5.35rem);
+  --line-height-tight: 1;
+  --line-height-body: 1.6;
+  --tracking-label: 0.14em;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  --radius-sm: 0.875rem;
   --radius-md: 1rem;
+  --radius-lg: 1.25rem;
   --radius-xl: 1.75rem;
+  --radius-2xl: 2rem;
   --radius-pill: 999px;
 
-  --shadow-surface: 0 18px 45px rgb(31 48 49 / 0.12);
-  --shadow-accent: 0 12px 30px rgb(24 130 113 / 0.2);
+  --shadow-surface:
+    0 24px 70px rgb(2 5 26 / 0.5),
+    inset 0 1px 0 rgb(255 255 255 / 0.06);
+  --shadow-raised:
+    0 14px 38px rgb(2 5 26 / 0.34),
+    inset 0 1px 0 rgb(255 255 255 / 0.04);
+  --shadow-accent: 0 18px 42px rgb(78 99 246 / 0.34);
+  --shadow-focus: 0 0 0 4px rgb(78 99 246 / 0.24);
+
+  --control-height: 3.5rem;
+  --control-padding-inline: 1rem;
+  --control-background: rgb(255 255 255 / 0.05);
+  --control-background-hover: rgb(255 255 255 / 0.08);
+  --control-background-strong: rgb(255 255 255 / 0.1);
+  --control-border: var(--color-border);
+  --control-border-strong: var(--color-border-strong);
+  --control-text: var(--color-text-strong);
 }
