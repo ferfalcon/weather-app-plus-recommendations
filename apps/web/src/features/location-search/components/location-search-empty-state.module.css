@@ -403,7 +403,7 @@
 
 @media (min-width: 70rem) {
   .layout {
-    align-items: stretch;
+    /* align-items: stretch; */
     gap: 1.25rem;
     grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 0.9fr);
     padding-block: 2rem 3rem;

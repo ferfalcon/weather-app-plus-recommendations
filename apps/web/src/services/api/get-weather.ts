@@ -15,7 +15,17 @@ export async function getWeather(query: WeatherQuery): Promise<WeatherPageRespon
   url.searchParams.set("tempUnit", query.tempUnit);
   url.searchParams.set("windUnit", query.windUnit);
 
-  const response = await fetch(url);
+  let response: Response;
+
+  try {
+    response = await fetch(url);
+  } catch {
+    throw new ApiError(
+      "The app API is still starting or unavailable. Try loading weather again in a moment.",
+      503,
+    );
+  }
+
   let responseBody: unknown;
 
   try {

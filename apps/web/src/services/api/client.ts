@@ -1,4 +1,4 @@
-const defaultApiBaseUrl = "http://localhost:3001";
+const defaultApiBaseUrl = "";
 
 export function getApiBaseUrl() {
   const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
@@ -11,9 +11,20 @@ export function getApiBaseUrl() {
 }
 
 export function createApiUrl(path: string) {
-  const normalizedBaseUrl = getApiBaseUrl().endsWith("/")
-    ? getApiBaseUrl()
-    : `${getApiBaseUrl()}/`;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const apiBaseUrl = getApiBaseUrl();
 
-  return new URL(path, normalizedBaseUrl).toString();
+  if (!apiBaseUrl) {
+    if (typeof window !== "undefined") {
+      return new URL(normalizedPath, window.location.origin).toString();
+    }
+
+    return normalizedPath;
+  }
+
+  const normalizedBaseUrl = apiBaseUrl.endsWith("/")
+    ? apiBaseUrl
+    : `${apiBaseUrl}/`;
+
+  return new URL(normalizedPath, normalizedBaseUrl).toString();
 }

@@ -11,7 +11,17 @@ export async function searchLocations(query: string): Promise<LocationSearchResp
 
   url.searchParams.set("q", query);
 
-  const response = await fetch(url);
+  let response: Response;
+
+  try {
+    response = await fetch(url);
+  } catch {
+    throw new ApiError(
+      "The app API is still starting or unavailable. Try the search again in a moment.",
+      503,
+    );
+  }
+
   let responseBody: unknown;
 
   try {

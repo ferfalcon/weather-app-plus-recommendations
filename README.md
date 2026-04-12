@@ -60,19 +60,21 @@ cp apps/web/.env.example apps/web/.env
 3. Start the apps:
 
 ```bash
-pnpm dev:api
-pnpm dev:web
+pnpm dev
 ```
 
 Convenience commands:
 
 ```bash
-pnpm dev
+pnpm dev:api
+pnpm dev:web
 pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build
 ```
+
+`pnpm dev` starts the API first and waits for `/healthz` before launching the web app, which avoids first-run search failures while the backend is still booting.
 
 Default local URLs:
 
@@ -100,10 +102,11 @@ GEMINI_API_KEY=your_gemini_api_key_here
 ### `apps/web`
 
 ```bash
-VITE_API_BASE_URL=http://localhost:3001
+# Optional in local development. Leave unset to use the Vite dev proxy.
+VITE_API_BASE_URL=https://your-api.example.com
 ```
 
-- `VITE_API_BASE_URL`: base URL for the app API. The frontend never talks directly to Open-Meteo or Gemini.
+- `VITE_API_BASE_URL`: optional override for the app API base URL. In local development, leaving it unset makes the frontend use the Vite dev proxy. The frontend never talks directly to Open-Meteo or Gemini.
 
 ## Normalized API routes
 
