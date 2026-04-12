@@ -324,7 +324,10 @@ export function WeatherView({
         </ul>
       </section>
 
-      <section className={styles.forecastSection} aria-labelledby="daily-forecast-heading">
+      <section
+        className={`${styles.forecastSection} ${styles.dailySection}`}
+        aria-labelledby="daily-forecast-heading"
+      >
         <div className={styles.sectionHeader}>
           <p className={styles.sectionKicker}>7-day outlook</p>
           <h3 className={styles.sectionHeading} id="daily-forecast-heading">
@@ -333,28 +336,40 @@ export function WeatherView({
         </div>
 
         <ul className={styles.dailyList}>
-          {weather.daily.map((day) => (
-            <li className={styles.dailyCard} key={day.date}>
-              <div className={styles.dailyMeta}>
-                <span className={styles.dailyDay}>{day.dayLabel}</span>
-                <span className={styles.dailyDate}>{day.date}</span>
-              </div>
-              <div className={styles.dailyCondition}>
-                <span aria-hidden="true" className={styles.dailyIcon}>
-                  {getWeatherIconGlyph(day.iconKey)}
-                </span>
-                <span>{day.conditionLabel}</span>
-              </div>
-              <div className={styles.dailyTemperatures}>
-                <span>{formatTemperature(day.maxTemperature, weather.units.temperature)}</span>
-                <span>{formatTemperature(day.minTemperature, weather.units.temperature)}</span>
-              </div>
-            </li>
-          ))}
+          {weather.daily.map((day) => {
+            const isHourlyDaySelected = day.date === hourlyForecastDay?.date;
+
+            return (
+              <li
+                className={`${styles.dailyCard} ${
+                  isHourlyDaySelected ? styles.dailyCardSelected : ""
+                }`}
+                key={day.date}
+              >
+                <div className={styles.dailyMeta}>
+                  <span className={styles.dailyDay}>{day.dayLabel}</span>
+                  <span className={styles.dailyDate}>{day.date}</span>
+                </div>
+                <div className={styles.dailyCondition}>
+                  <span aria-hidden="true" className={styles.dailyIcon}>
+                    {getWeatherIconGlyph(day.iconKey)}
+                  </span>
+                  <span>{day.conditionLabel}</span>
+                </div>
+                <div className={styles.dailyTemperatures}>
+                  <span>{formatTemperature(day.maxTemperature, weather.units.temperature)}</span>
+                  <span>{formatTemperature(day.minTemperature, weather.units.temperature)}</span>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </section>
 
-      <section className={styles.forecastSection} aria-labelledby="hourly-forecast-heading">
+      <section
+        className={`${styles.forecastSection} ${styles.hourlySection}`}
+        aria-labelledby="hourly-forecast-heading"
+      >
         <div className={styles.sectionHeader}>
           <p className={styles.sectionKicker}>Hourly detail</p>
           <h3 className={styles.sectionHeading} id="hourly-forecast-heading">

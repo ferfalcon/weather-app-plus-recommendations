@@ -322,14 +322,28 @@
   margin: 0;
 }
 
+.recommendationsSection,
+.dailySection,
+.hourlySection {
+  position: relative;
+}
+
+.recommendationsSection,
+.dailySection,
+.hourlySection,
+.forecastSection {
+  overflow: hidden;
+}
+
 .recommendationsCopy {
   color: var(--color-text-muted);
   line-height: var(--line-height-body);
+  max-width: 42rem;
 }
 
 .recommendationsList {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.85rem;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -337,13 +351,27 @@
 
 .recommendationCard {
   background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.02)),
-    var(--color-surface-soft);
-  border: 1px solid var(--color-border);
+    radial-gradient(circle at top right, rgb(94 112 255 / 0.14), transparent 36%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.02)),
+    rgb(20 25 59 / 0.6);
+  border: 1px solid rgb(255 255 255 / 0.09);
   border-radius: var(--radius-lg);
+  box-shadow:
+    0 18px 32px rgb(4 8 30 / 0.2),
+    inset 0 1px 0 rgb(255 255 255 / 0.05);
   display: grid;
-  gap: 0.75rem;
-  padding: 1rem;
+  gap: 0.9rem;
+  min-height: 100%;
+  padding: 1.05rem;
+  position: relative;
+}
+
+.recommendationCard::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, rgb(255 152 56 / 0.62), rgb(110 124 255 / 0.08));
 }
 
 .recommendationMeta {
@@ -364,9 +392,16 @@
   text-transform: uppercase;
 }
 
+.recommendationBadge:first-child {
+  background: rgb(255 152 56 / 0.12);
+  border-color: rgb(255 152 56 / 0.24);
+  color: rgb(255 214 176);
+}
+
 .recommendationTitle {
   color: var(--color-text-strong);
-  font-size: 1.05rem;
+  font-size: 1.12rem;
+  letter-spacing: -0.02em;
 }
 
 .recommendationDescription {
@@ -376,7 +411,7 @@
 
 .sectionHeader {
   display: grid;
-  gap: 0.3rem;
+  gap: 0.38rem;
 }
 
 .sectionHeading {
@@ -392,6 +427,38 @@
   padding: 0;
 }
 
+.dailySection,
+.hourlySection {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.02)),
+    var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-raised);
+  padding: 1.15rem;
+}
+
+.dailySection::before,
+.hourlySection::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+}
+
+.dailySection::before {
+  inset: auto -10% -32% auto;
+  width: 15rem;
+  height: 15rem;
+  background: radial-gradient(circle, rgb(84 99 255 / 0.16), transparent 72%);
+}
+
+.hourlySection::before {
+  inset: -14% auto auto -8%;
+  width: 14rem;
+  height: 14rem;
+  background: radial-gradient(circle, rgb(255 152 56 / 0.12), transparent 72%);
+}
+
 .dailyCard,
 .hourlyCard {
   background:
@@ -403,15 +470,19 @@
 }
 
 .dailyCard {
-  align-items: center;
+  align-content: start;
   display: grid;
-  gap: 0.75rem;
-  padding: 0.95rem;
+  gap: 0.9rem;
+  min-width: 8.4rem;
+  padding: 1rem 0.95rem;
+  position: relative;
+  text-align: center;
 }
 
 .dailyMeta {
   display: grid;
-  gap: 0.2rem;
+  gap: 0.28rem;
+  justify-items: center;
 }
 
 .dailyDay {
@@ -427,8 +498,11 @@
 .dailyCondition {
   align-items: center;
   color: var(--color-text);
-  display: inline-flex;
-  gap: 0.65rem;
+  display: grid;
+  gap: 0.6rem;
+  justify-items: center;
+  min-height: 4.8rem;
+  text-align: center;
 }
 
 .dailyIcon,
@@ -442,10 +516,41 @@
 
 .dailyTemperatures {
   color: var(--color-text-strong);
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
+  align-items: end;
+  display: grid;
+  gap: 0.2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   font-weight: 700;
+}
+
+.dailyTemperatures span:last-child {
+  color: var(--color-text-muted);
+}
+
+.dailyCardSelected {
+  background:
+    linear-gradient(180deg, rgb(94 112 255 / 0.18), rgb(255 255 255 / 0.04)),
+    rgb(20 25 59 / 0.78);
+  border-color: rgb(94 112 255 / 0.34);
+  box-shadow:
+    0 0 0 1px rgb(94 112 255 / 0.18),
+    0 18px 34px rgb(33 42 116 / 0.24);
+}
+
+.dailyCardSelected::before {
+  content: "Hourly focus";
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  background: rgb(255 152 56 / 0.14);
+  border: 1px solid rgb(255 152 56 / 0.22);
+  border-radius: var(--radius-pill);
+  color: rgb(255 219 190);
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.24rem 0.5rem;
+  text-transform: uppercase;
 }
 
 .daySelector {
@@ -464,10 +569,10 @@
   color: inherit;
   cursor: pointer;
   display: grid;
-  gap: 0.2rem;
-  min-height: 4rem;
+  gap: 0.3rem;
+  min-height: 4.35rem;
   min-width: 0;
-  padding: 0.8rem 0.95rem;
+  padding: 0.95rem 1rem;
   text-align: left;
   transition:
     border-color 160ms ease,
@@ -488,8 +593,8 @@
 
 .dayButtonSelected {
   background:
-    linear-gradient(180deg, rgb(94 112 255 / 0.2), rgb(255 255 255 / 0.04)),
-    var(--control-background-hover);
+    linear-gradient(180deg, rgb(94 112 255 / 0.24), rgb(255 255 255 / 0.05)),
+    rgb(26 34 88 / 0.82);
   border-color: var(--color-accent);
   box-shadow:
     0 0 0 1px rgb(94 112 255 / 0.24),
@@ -498,6 +603,10 @@
 
 .dayButtonSelected .dayButtonLabel {
   color: var(--color-text-strong);
+}
+
+.dayButtonSelected .dayButtonDate {
+  color: rgb(232 236 255 / 0.88);
 }
 
 .dayButtonLabel {
@@ -511,10 +620,11 @@
 }
 
 .hourlyCard {
+  align-items: center;
   display: grid;
-  gap: 0.55rem;
-  justify-items: start;
-  padding: 0.95rem;
+  gap: 0.55rem 0.85rem;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  padding: 1rem 1.05rem;
 }
 
 .hourlyTime,
@@ -533,16 +643,23 @@
 .hourlyTime {
   font-size: 0.92rem;
   font-weight: 700;
+  min-width: 3.2rem;
 }
 
 .hourlyTemperature {
   color: var(--color-text-strong);
   font-size: 1.15rem;
   font-weight: 700;
+  justify-self: end;
 }
 
 .hourlyCondition {
   color: var(--color-text);
+  min-width: 0;
+}
+
+.hourlyRain {
+  grid-column: 1 / -1;
 }
 
 .emptyCopy {
@@ -551,6 +668,14 @@
 }
 
 @media (min-width: 30rem) {
+  .dailyList {
+    grid-auto-columns: minmax(8.8rem, 1fr);
+    grid-auto-flow: column;
+    overflow-x: auto;
+    padding-bottom: 0.35rem;
+    scrollbar-width: thin;
+  }
+
   .hourlyList {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -585,18 +710,41 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .dailyCard {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) auto;
+  .dailyList {
+    grid-auto-columns: minmax(9rem, 1fr);
   }
 
   .hourlyList {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (min-width: 58rem) {
   .metricsGrid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .hourlySection {
+    column-gap: 1rem;
+    grid-template-areas:
+      "header header"
+      "selector list";
+    grid-template-columns: minmax(12rem, 0.75fr) minmax(0, 1.55fr);
+  }
+
+  .hourlySection .sectionHeader {
+    grid-area: header;
+  }
+
+  .hourlySection .daySelector {
+    align-content: start;
+    grid-area: selector;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hourlySection .hourlyList,
+  .hourlySection .emptyCopy {
+    grid-area: list;
   }
 }
 
@@ -616,7 +764,9 @@
 
   .controlsSection,
   .currentSection,
-  .recommendationsSection {
+  .recommendationsSection,
+  .dailySection,
+  .hourlySection {
     padding: 1.3rem;
   }
 
@@ -636,7 +786,10 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .hourlyList {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  .dailyList {
+    grid-auto-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    overflow-x: visible;
+    padding-bottom: 0;
   }
 }
