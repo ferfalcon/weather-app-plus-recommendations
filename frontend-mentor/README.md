@@ -52,6 +52,7 @@ Users should be able to:
 - Mobile-first workflow
 - [React](https://react.dev/) - The library for web and native user interfaces
 - [Free Weather API](https://open-meteo.com/) - Open-Meteo is an open-source weather API and offers free access for non-commercial use.
+- [Google AI Studio](https://aistudio.google.com/) - Test prompts, manage your API keys, monitor usage, and build prototypes.
 
 ### What I learned
 
