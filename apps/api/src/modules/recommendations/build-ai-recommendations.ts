@@ -53,7 +53,7 @@ type GeminiGenerateContentResponse = {
 };
 
 const GEMINI_GENERATE_CONTENT_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent";
 const geminiRequestTimeoutMs = 5_000;
 const minimumDescriptionLength = 24;
 const aiRecommendationItemsSchema = activitySuggestionSchema.array().length(3);
