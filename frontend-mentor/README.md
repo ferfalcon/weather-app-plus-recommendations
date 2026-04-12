@@ -38,8 +38,8 @@ Users should be able to:
 
 ### Links
 
-- Solution URL: [https://github.com/ferfalcon/weather-app-plus-recommendations](https://github.com/ferfalcon/weather-app-plus-recommendations)
-- Live Site URL: [TBD](TBD)
+- Solution URL: [https://github.com/ferfalcon/weather-app-plus-recommendations](https://github.com/ferfalcon/weather-app-plus-recommendations/)
+- Live Site URL: [https://weather-app-plus-recommendations.vercel.app](https://weather-app-plus-recommendations.vercel.app/)
 
 ## My process
 
@@ -50,9 +50,17 @@ Users should be able to:
 - Flexbox
 - CSS Grid
 - Mobile-first workflow
-- [React](https://react.dev/) - The library for web and native user interfaces
 - [Free Weather API](https://open-meteo.com/) - Open-Meteo is an open-source weather API and offers free access for non-commercial use.
+- [pnpm](https://pnpm.io/) - Performant npm a JavaScript package manager.
+- [TypeScript](https://www.typescriptlang.org/) - TypeScript is JavaScript with syntax for types.
+- [Render](https://render.com/) - Deploy platform.
+- [Vercel](https://vercel.com/) - Build and deploy on the AI Cloud.
+- [Vite](https://vite.dev/) - The Build Tool for the Web.
+- [React](https://react.dev/) - The library for web and native user interfaces.
+- [TanStack Router](https://tanstack.com/router/) - A powerful React router for client-side and full-stack react applications. Fully type-safe APIs, first-class search-params for managing state in the URL and seamless integration with the existing React ecosystem.
+- [TanStack Query](https://tanstack.com/query/) - Powerful asynchronous state management, server-state utilities and data fetching. Fetch, cache, update, and wrangle all forms of async data in your TS/JS, React, Vue, Solid, Svelte & Angular applications all without touching any "global state".
 - [Google AI Studio](https://aistudio.google.com/) - Test prompts, manage your API keys, monitor usage, and build prototypes.
+- [Zod](https://zod.dev/) - TypeScript-first schema validation with static type inference.
 
 ### What I learned
 
@@ -82,13 +90,15 @@ Use this section to outline areas that you want to continue focusing on in futur
 
 - [AGENTS.md](https://agents.md/)
 - [Custom instructions with AGENTS.md](https://developers.openai.com/codex/guides/agents-md) - Give Codex extra instructions and context for your project
-- [Agents.md Guide for OpenAI Codex](https://agentsmd.net/) - This is an amazing article which helped me finally understand XYZ. I'd recommend it to anyone still learning this concept.
+- [Agents.md Guide for OpenAI Codex](https://agentsmd.net/) - Learn how to use Agents.md files to enhance OpenAI Codex and other AI agents in navigating your codebases, running tests, and adhering to your project's standard practices.
 - [How to Create the Perfect AGENTS.md (incl. Template)](https://www.gradually.ai/en/agents-md/) - Blog post.
+- [SKILLS](https://skills.sh/) - The Open Agent Skills Ecosystem
+- [Agent Skills](https://agentskills.io/) - A simple, open format for giving agents new capabilities and expertise.
 
 ### AI Collaboration
 
-- OpenAI ChatGPT for creating accurate prompts for OpenAi Codex
-- OpenAi Codex to actually write the code
+- OpenAI ChatGPT for planning and creating accurate prompts for OpenAi Codex.
+- OpenAi Codex to actually write the code.
 
 ## Author
 
