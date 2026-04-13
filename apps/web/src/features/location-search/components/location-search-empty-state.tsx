@@ -398,7 +398,6 @@ export function LocationSearchEmptyState() {
               onTemperatureUnitChange={handleTemperatureUnitChange}
               onWindUnitChange={handleWindUnitChange}
               selectedUnits={selectedWeatherUnits}
-              title={isShowingCurrentWeather ? "Live weather" : "Latest loaded weather"}
               weather={displayedWeather}
             />
           </section>

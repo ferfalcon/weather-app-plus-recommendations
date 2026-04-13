@@ -17,7 +17,6 @@ type WeatherViewProps = {
   onTemperatureUnitChange: (tempUnit: WeatherQuery["tempUnit"]) => void;
   onWindUnitChange: (windUnit: WeatherQuery["windUnit"]) => void;
   selectedUnits: SelectedWeatherUnits;
-  title: string;
   weather: WeatherPageResponse;
 };
 
@@ -32,14 +31,6 @@ const iconGlyphByKey: Record<string, string> = {
   snow: "SNOW",
   storm: "STORM",
 };
-
-function formatLocationLabel(location: LocationOption) {
-  if (location.region) {
-    return `${location.name}, ${location.region}, ${location.country}`;
-  }
-
-  return `${location.name}, ${location.country}`;
-}
 
 function getWeatherIconGlyph(iconKey: string) {
   return iconGlyphByKey[iconKey] ?? "CLOUD";
@@ -137,7 +128,6 @@ export function WeatherView({
   onTemperatureUnitChange,
   onWindUnitChange,
   selectedUnits,
-  title,
   weather,
 }: WeatherViewProps) {
   const hourlyForecastListId = useId();
@@ -155,7 +145,6 @@ export function WeatherView({
   ]);
 
   const hourlyForecastDay = getHourlyForecastDay(weather.daily, selectedHourlyDayDate);
-  const locationLabel = formatLocationLabel(highlightedLocation);
   const summaryLocationLabel = formatSummaryLocation(highlightedLocation);
   const summaryDateLabel = formatSummaryDate(
     weather.daily[0]?.date,
@@ -167,81 +156,71 @@ export function WeatherView({
 
   return (
     <div className={styles.layout}>
-      <div className={styles.header}>
-        <div className={styles.headerIntro}>
-          <p className={styles.kicker}>{title}</p>
-          <h2 className={styles.heading}>{locationLabel}</h2>
+      <div className={styles.chrome}>
+        <div className={styles.metaBar}>
+          <p className={styles.metaPill}>Timezone: {highlightedLocation.timezone}</p>
+          <p className={styles.metaPill}>
+            Observed at {formatObservedTime(weather.current.observedAt)}
+          </p>
+          {isRefreshing ? (
+            <p aria-live="polite" className={styles.refreshing} role="status">
+              Refreshing forecast...
+            </p>
+          ) : null}
         </div>
 
-        <div className={styles.headerAside}>
-          <div className={styles.headerMeta}>
-            <p className={styles.timezone}>Timezone: {highlightedLocation.timezone}</p>
-            <p className={styles.observedAt}>
-              Observed at {formatObservedTime(weather.current.observedAt)}
-            </p>
-            {isRefreshing ? (
-              <p aria-live="polite" className={styles.refreshing} role="status">
-                Refreshing forecast...
-              </p>
-            ) : null}
+        <section className={styles.unitToolbar} aria-labelledby="forecast-display-heading">
+          <h2 className={styles.visuallyHidden} id="forecast-display-heading">
+            Forecast display settings
+          </h2>
+
+          <label className={styles.compactControl}>
+            <span className={styles.compactLabel}>Temp</span>
+            <select
+              aria-label="Temperature unit"
+              className={styles.compactSelect}
+              value={selectedUnits.tempUnit}
+              onChange={(event) =>
+                onTemperatureUnitChange(event.target.value as WeatherQuery["tempUnit"])
+              }
+            >
+              <option value="celsius">°C</option>
+              <option value="fahrenheit">°F</option>
+            </select>
+          </label>
+
+          <label className={styles.compactControl}>
+            <span className={styles.compactLabel}>Wind</span>
+            <select
+              aria-label="Wind speed unit"
+              className={styles.compactSelect}
+              value={selectedUnits.windUnit}
+              onChange={(event) =>
+                onWindUnitChange(event.target.value as WeatherQuery["windUnit"])
+              }
+            >
+              <option value="kmh">km/h</option>
+              <option value="mph">mph</option>
+            </select>
+          </label>
+
+          <div className={styles.compactControlStatic}>
+            <span className={styles.compactLabel}>Rain</span>
+            <span className={styles.compactValue}>mm</span>
           </div>
+        </section>
 
-          <section className={styles.unitsPanel} aria-labelledby="forecast-display-heading">
-            <div className={styles.unitsPanelHeader}>
-              <p className={styles.sectionKicker}>Forecast display</p>
-              <h3 className={styles.sectionHeadingCompact} id="forecast-display-heading">
-                Units
-              </h3>
-            </div>
-
-            <div className={styles.unitsGrid}>
-              <label className={styles.controlField}>
-                <span className={styles.controlLabel}>Temperature</span>
-                <select
-                  className={styles.unitSelect}
-                  value={selectedUnits.tempUnit}
-                  onChange={(event) =>
-                    onTemperatureUnitChange(event.target.value as WeatherQuery["tempUnit"])
-                  }
-                >
-                  <option value="celsius">Celsius (°C)</option>
-                  <option value="fahrenheit">Fahrenheit (°F)</option>
-                </select>
-              </label>
-
-              <label className={styles.controlField}>
-                <span className={styles.controlLabel}>Wind speed</span>
-                <select
-                  className={styles.unitSelect}
-                  value={selectedUnits.windUnit}
-                  onChange={(event) =>
-                    onWindUnitChange(event.target.value as WeatherQuery["windUnit"])
-                  }
-                >
-                  <option value="kmh">Kilometers per hour (km/h)</option>
-                  <option value="mph">Miles per hour (mph)</option>
-                </select>
-              </label>
-
-              <div className={styles.controlField}>
-                <span className={styles.controlLabel}>Precipitation</span>
-                <p className={styles.unitValue}>Millimeters (mm)</p>
-              </div>
-            </div>
-
-            <p aria-live="polite" className={styles.unitsStatus} role="status">
-              {requestedUnitsMatchWeatherUnits
-                ? `Forecast values are shown in ${formatTemperatureUnitLabel(
-                    weather.units.temperature,
-                  )}, ${formatWindUnitLabel(weather.units.windSpeed)}, and millimeters for precipitation.`
-                : `Requested ${formatTemperatureUnitLabel(
-                    selectedUnits.tempUnit,
-                  )} and ${formatWindUnitLabel(
-                    selectedUnits.windUnit,
-                  )}. The cards below keep the last successful forecast visible until the refreshed values arrive.`}
-            </p>
-          </section>
-        </div>
+        <p aria-live="polite" className={styles.unitsStatus} role="status">
+          {requestedUnitsMatchWeatherUnits
+            ? `Forecast values are shown in ${formatTemperatureUnitLabel(
+                weather.units.temperature,
+              )}, ${formatWindUnitLabel(weather.units.windSpeed)}, and millimeters for precipitation.`
+            : `Requested ${formatTemperatureUnitLabel(
+                selectedUnits.tempUnit,
+              )} and ${formatWindUnitLabel(
+                selectedUnits.windUnit,
+              )}. The cards below keep the last successful forecast visible until the refreshed values arrive.`}
+        </p>
       </div>
 
       <div className={styles.contentGrid}>
@@ -250,9 +229,9 @@ export function WeatherView({
             <div className={styles.currentSummary}>
               <div className={styles.currentCopy}>
                 <p className={styles.currentLabel}>Current weather</p>
-                <h3 className={styles.currentHeading} id="current-weather-heading">
+                <h2 className={styles.currentHeading} id="current-weather-heading">
                   {summaryLocationLabel}
-                </h3>
+                </h2>
                 <p className={styles.currentCondition}>{weather.current.conditionLabel}</p>
                 <p className={styles.currentContext}>
                   {summaryDateLabel ? `${summaryDateLabel} · ` : ""}
@@ -382,41 +361,34 @@ export function WeatherView({
             aria-labelledby="hourly-forecast-heading"
           >
             <div className={styles.hourlyHeader}>
-              <div className={styles.sectionHeader}>
-                <p className={styles.sectionKicker}>Hourly detail</p>
+              <div className={styles.hourlyHeadingGroup}>
                 <h3 className={styles.sectionHeading} id="hourly-forecast-heading">
-                  {hourlyForecastDay
-                    ? `Hourly forecast for ${hourlyForecastDay.dayLabel}`
-                    : "Hourly forecast unavailable"}
+                  Hourly forecast
                 </h3>
+                <p className={styles.hourlySubheading}>
+                  {hourlyForecastDay
+                    ? `Showing ${hourlyForecastDay.dayLabel}`
+                    : "Hourly forecast unavailable"}
+                </p>
               </div>
 
               {weather.daily.length > 0 ? (
-                <div
-                  aria-label="Select a day for the hourly forecast"
-                  className={styles.daySelector}
-                  role="group"
-                >
-                  {weather.daily.map((day) => {
-                    const isSelected = day.date === hourlyForecastDay?.date;
-
-                    return (
-                      <button
-                        aria-controls={hourlyForecastListId}
-                        aria-pressed={isSelected}
-                        className={`${styles.dayButton} ${
-                          isSelected ? styles.dayButtonSelected : ""
-                        }`}
-                        key={day.date}
-                        onClick={() => setSelectedHourlyDayDate(day.date)}
-                        type="button"
-                      >
-                        <span className={styles.dayButtonLabel}>{day.dayLabel}</span>
-                        <span className={styles.dayButtonDate}>{day.date}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+                <label className={styles.daySelectField}>
+                  <span className={styles.daySelectLabel}>Day</span>
+                  <select
+                    aria-controls={hourlyForecastListId}
+                    aria-label="Select a day for the hourly forecast"
+                    className={styles.daySelect}
+                    value={hourlyForecastDay?.date ?? ""}
+                    onChange={(event) => setSelectedHourlyDayDate(event.target.value)}
+                  >
+                    {weather.daily.map((day) => (
+                      <option key={day.date} value={day.date}>
+                        {day.dayLabel}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               ) : null}
             </div>
 

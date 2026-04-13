@@ -17,7 +17,6 @@ function renderWeatherView() {
         tempUnit: "celsius",
         windUnit: "kmh",
       }}
-      title="Live weather from the app API"
       weather={createWeatherPageResponse()}
     />,
   );
@@ -32,10 +31,10 @@ describe("WeatherView", () => {
   it("fires the unit change callbacks with the next requested units", () => {
     const { onTemperatureUnitChange, onWindUnitChange } = renderWeatherView();
 
-    fireEvent.change(screen.getByLabelText("Temperature"), {
+    fireEvent.change(screen.getByLabelText("Temperature unit"), {
       target: { value: "fahrenheit" },
     });
-    fireEvent.change(screen.getByLabelText("Wind speed"), {
+    fireEvent.change(screen.getByLabelText("Wind speed unit"), {
       target: { value: "mph" },
     });
 
@@ -46,30 +45,25 @@ describe("WeatherView", () => {
   it("switches the hourly forecast day using local UI state", () => {
     renderWeatherView();
 
-    const todayButton = screen.getByRole("button", { name: /Today/i });
-    const tomorrowButton = screen.getByRole("button", { name: /Tomorrow/i });
+    const daySelect = screen.getByLabelText("Select a day for the hourly forecast");
 
-    expect(todayButton).toHaveAttribute("aria-pressed", "true");
-    expect(tomorrowButton).toHaveAttribute("aria-pressed", "false");
+    expect(daySelect).toHaveValue("2024-06-10");
     expect(
       screen.getByRole("heading", {
         level: 3,
-        name: "Hourly forecast for Today",
+        name: "Hourly forecast",
       }),
     ).toBeInTheDocument();
+    expect(screen.getByText("Showing Today")).toBeInTheDocument();
     expect(screen.getByText("09:00")).toBeInTheDocument();
     expect(screen.queryByText("11:00")).not.toBeInTheDocument();
 
-    fireEvent.click(tomorrowButton);
+    fireEvent.change(daySelect, {
+      target: { value: "2024-06-11" },
+    });
 
-    expect(
-      screen.getByRole("heading", {
-        level: 3,
-        name: "Hourly forecast for Tomorrow",
-      }),
-    ).toBeInTheDocument();
-    expect(todayButton).toHaveAttribute("aria-pressed", "false");
-    expect(tomorrowButton).toHaveAttribute("aria-pressed", "true");
+    expect(daySelect).toHaveValue("2024-06-11");
+    expect(screen.getByText("Showing Tomorrow")).toBeInTheDocument();
     expect(screen.getByText("11:00")).toBeInTheDocument();
     expect(screen.queryByText("09:00")).not.toBeInTheDocument();
   });

@@ -186,7 +186,7 @@ describe("LocationSearchEmptyState", () => {
     expect(
       await screen.findByRole("heading", {
         level: 2,
-        name: "Montevideo, Montevideo Department, Uruguay",
+        name: "Montevideo, Uruguay",
       }),
     ).toBeInTheDocument();
     expect(
