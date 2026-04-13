@@ -173,6 +173,52 @@ describe("LocationSearchEmptyState", () => {
     expect(screen.queryByText("Try a quick search")).not.toBeInTheDocument();
   });
 
+  it("refetches weather when header unit controls change after a forecast is loaded", async () => {
+    vi.mocked(searchLocations).mockResolvedValue([testLocation]);
+    vi.mocked(getWeather).mockResolvedValue(createWeatherPageResponse());
+
+    await renderLocationSearchEmptyState();
+
+    submitSearch("Montevideo");
+
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: /Montevideo.*Uruguay/i,
+      }),
+    );
+
+    await screen.findByRole("heading", {
+      level: 2,
+      name: "Montevideo, Uruguay",
+    });
+
+    fireEvent.change(screen.getByLabelText("Temperature unit"), {
+      target: { value: "fahrenheit" },
+    });
+
+    await waitFor(() => {
+      expect(getWeather).toHaveBeenLastCalledWith({
+        lat: -34.9,
+        lon: -56.16,
+        tempUnit: "fahrenheit",
+        windUnit: "kmh",
+      });
+    });
+
+    fireEvent.change(screen.getByLabelText("Wind speed unit"), {
+      target: { value: "mph" },
+    });
+
+    await waitFor(() => {
+      expect(getWeather).toHaveBeenLastCalledWith({
+        lat: -34.9,
+        lon: -56.16,
+        tempUnit: "fahrenheit",
+        windUnit: "mph",
+      });
+    });
+  });
+
   it("restores the selected forecast from route search params after a reload", async () => {
     vi.mocked(searchLocations).mockResolvedValue([testLocation]);
     vi.mocked(getWeather).mockResolvedValue(createWeatherPageResponse());

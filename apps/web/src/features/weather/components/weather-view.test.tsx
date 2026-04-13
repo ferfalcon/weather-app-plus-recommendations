@@ -1,45 +1,24 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { createWeatherPageResponse, testLocation } from "../../../test/fixtures";
 import { WeatherView } from "./weather-view";
 
 function renderWeatherView() {
-  const onTemperatureUnitChange = vi.fn();
-  const onWindUnitChange = vi.fn();
-
   render(
     <WeatherView
       highlightedLocation={testLocation}
-      onTemperatureUnitChange={onTemperatureUnitChange}
-      onWindUnitChange={onWindUnitChange}
-      selectedUnits={{
-        tempUnit: "celsius",
-        windUnit: "kmh",
-      }}
       weather={createWeatherPageResponse()}
     />,
   );
-
-  return {
-    onTemperatureUnitChange,
-    onWindUnitChange,
-  };
 }
 
 describe("WeatherView", () => {
-  it("fires the unit change callbacks with the next requested units", () => {
-    const { onTemperatureUnitChange, onWindUnitChange } = renderWeatherView();
+  it("keeps unit controls out of the forecast content chrome", () => {
+    renderWeatherView();
 
-    fireEvent.change(screen.getByLabelText("Temperature unit"), {
-      target: { value: "fahrenheit" },
-    });
-    fireEvent.change(screen.getByLabelText("Wind speed unit"), {
-      target: { value: "mph" },
-    });
-
-    expect(onTemperatureUnitChange).toHaveBeenCalledWith("fahrenheit");
-    expect(onWindUnitChange).toHaveBeenCalledWith("mph");
+    expect(screen.queryByLabelText("Temperature unit")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Wind speed unit")).not.toBeInTheDocument();
   });
 
   it("switches the hourly forecast day using local UI state", () => {

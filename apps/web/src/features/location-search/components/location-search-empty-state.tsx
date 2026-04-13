@@ -1,4 +1,11 @@
-import { useEffect, useId, useMemo, useState, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useState,
+  type FormEvent,
+} from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
@@ -8,6 +15,8 @@ import type {
   WeatherQuery,
 } from "@weather-app-plus-recommendations/contracts";
 
+import { AppShellUnitControls } from "../../../app/app-shell-unit-controls";
+import { useAppShellHeaderAccessory } from "../../../app/app-shell";
 import { Surface } from "../../../components/ui/surface";
 import { WeatherView } from "../../../features/weather/components/weather-view";
 import { ApiError } from "../../../services/api/api-error";
@@ -208,6 +217,78 @@ export function LocationSearchEmptyState() {
     locationSearchQuery.isError ||
     hasNoResults ||
     (submittedQuery.length > 0 && selectedLocation === null && locations.length > 0);
+
+  const updateRouteSearch = useCallback(
+    (
+      updater: (previousSearch: LocationSearchPageSearch) => LocationSearchPageSearch,
+    ) => {
+      void navigate({
+        replace: true,
+        search: (previousSearch) => updater(previousSearch),
+        to: "/",
+      });
+    },
+    [navigate],
+  );
+
+  function clearSelectedLocation(nextQuery: string) {
+    updateRouteSearch((previousSearch) => ({
+      tempUnit: previousSearch.tempUnit,
+      windUnit: previousSearch.windUnit,
+      q: nextQuery,
+    }));
+  }
+
+  const handleTemperatureUnitChange = useCallback(
+    (nextTempUnit: WeatherQuery["tempUnit"]) => {
+      if (selectedWeatherUnits.tempUnit === nextTempUnit) {
+        return;
+      }
+
+      updateRouteSearch((previousSearch) => {
+        return {
+          ...previousSearch,
+          tempUnit: nextTempUnit,
+        };
+      });
+    },
+    [selectedWeatherUnits.tempUnit, updateRouteSearch],
+  );
+
+  const handleWindUnitChange = useCallback(
+    (nextWindUnit: WeatherQuery["windUnit"]) => {
+      if (selectedWeatherUnits.windUnit === nextWindUnit) {
+        return;
+      }
+
+      updateRouteSearch((previousSearch) => {
+        return {
+          ...previousSearch,
+          windUnit: nextWindUnit,
+        };
+      });
+    },
+    [selectedWeatherUnits.windUnit, updateRouteSearch],
+  );
+
+  const headerAccessory = useMemo(() => {
+    if (!hasDisplayedWeather) {
+      return null;
+    }
+
+    return (
+      <AppShellUnitControls
+        selectedUnits={selectedWeatherUnits}
+        onTemperatureUnitChange={handleTemperatureUnitChange}
+        onWindUnitChange={handleWindUnitChange}
+      />
+    );
+  }, [
+    hasDisplayedWeather,
+    selectedWeatherUnits,
+    handleTemperatureUnitChange,
+    handleWindUnitChange,
+  ]);
   const searchFeedbackMessage = getSearchFeedbackMessage({
     submittedQuery,
     selectedLocation,
@@ -219,23 +300,7 @@ export function LocationSearchEmptyState() {
     resultCount: locations.length,
   });
 
-  function updateRouteSearch(
-    updater: (previousSearch: LocationSearchPageSearch) => LocationSearchPageSearch,
-  ) {
-    void navigate({
-      replace: true,
-      search: (previousSearch) => updater(previousSearch),
-      to: "/",
-    });
-  }
-
-  function clearSelectedLocation(nextQuery: string) {
-    updateRouteSearch((previousSearch) => ({
-      tempUnit: previousSearch.tempUnit,
-      windUnit: previousSearch.windUnit,
-      q: nextQuery,
-    }));
-  }
+  useAppShellHeaderAccessory(headerAccessory);
 
   function submitSearch(nextQuery: string) {
     clearSelectedLocation(nextQuery);
@@ -273,32 +338,6 @@ export function LocationSearchEmptyState() {
       timezone: location.timezone,
       ...(location.region ? { region: location.region } : {}),
     }));
-  }
-
-  function handleTemperatureUnitChange(nextTempUnit: WeatherQuery["tempUnit"]) {
-    if (selectedWeatherUnits.tempUnit === nextTempUnit) {
-      return;
-    }
-
-    updateRouteSearch((previousSearch) => {
-      return {
-        ...previousSearch,
-        tempUnit: nextTempUnit,
-      };
-    });
-  }
-
-  function handleWindUnitChange(nextWindUnit: WeatherQuery["windUnit"]) {
-    if (selectedWeatherUnits.windUnit === nextWindUnit) {
-      return;
-    }
-
-    updateRouteSearch((previousSearch) => {
-      return {
-        ...previousSearch,
-        windUnit: nextWindUnit,
-      };
-    });
   }
 
   return (
@@ -395,9 +434,6 @@ export function LocationSearchEmptyState() {
             <WeatherView
               highlightedLocation={displayedWeatherLocation}
               isRefreshing={isRefreshingWeather}
-              onTemperatureUnitChange={handleTemperatureUnitChange}
-              onWindUnitChange={handleWindUnitChange}
-              selectedUnits={selectedWeatherUnits}
               weather={displayedWeather}
             />
           </section>

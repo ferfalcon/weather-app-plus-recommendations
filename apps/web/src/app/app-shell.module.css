@@ -29,7 +29,13 @@
   align-items: center;
   display: flex;
   gap: 1rem;
-  justify-content: flex-start;
+  justify-content: space-between;
+}
+
+.headerAccessory {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
 }
 
 .brandLockup {
@@ -103,6 +109,17 @@
 
   .main {
     padding-block: 0.7rem 3.8rem;
+  }
+}
+
+@media (max-width: 47.99rem) {
+  .headerInner {
+    align-items: start;
+    flex-wrap: wrap;
+  }
+
+  .headerAccessory {
+    width: 100%;
   }
 }
 

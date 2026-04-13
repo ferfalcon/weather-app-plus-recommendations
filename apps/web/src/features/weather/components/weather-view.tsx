@@ -4,7 +4,6 @@ import type {
   ForecastDay,
   LocationOption,
   WeatherPageResponse,
-  WeatherQuery,
 } from "@weather-app-plus-recommendations/contracts";
 
 import drizzleIcon from "../../../assets/images/icon-drizzle.webp";
@@ -17,27 +16,10 @@ import stormIcon from "../../../assets/images/icon-storm.webp";
 import sunnyIcon from "../../../assets/images/icon-sunny.webp";
 import styles from "./weather-view.module.css";
 
-type SelectedWeatherUnits = Pick<WeatherQuery, "tempUnit" | "windUnit">;
-
 type WeatherViewProps = {
   highlightedLocation: LocationOption;
   isRefreshing?: boolean;
-  onTemperatureUnitChange: (tempUnit: WeatherQuery["tempUnit"]) => void;
-  onWindUnitChange: (windUnit: WeatherQuery["windUnit"]) => void;
-  selectedUnits: SelectedWeatherUnits;
   weather: WeatherPageResponse;
-};
-
-const iconGlyphByKey: Record<string, string> = {
-  sunny: "SUN",
-  "partly-cloudy": "PART",
-  cloudy: "CLOUD",
-  overcast: "OVER",
-  fog: "FOG",
-  drizzle: "DRIZ",
-  rain: "RAIN",
-  snow: "SNOW",
-  storm: "STORM",
 };
 
 const iconAssetByKey: Record<string, string> = {
@@ -51,10 +33,6 @@ const iconAssetByKey: Record<string, string> = {
   snow: snowIcon,
   storm: stormIcon,
 };
-
-function getWeatherIconGlyph(iconKey: string) {
-  return iconGlyphByKey[iconKey] ?? "CLOUD";
-}
 
 function getWeatherIconAsset(iconKey: string) {
   return iconAssetByKey[iconKey] ?? overcastIcon;
@@ -74,14 +52,6 @@ function formatWindSpeed(value: number, unit: WeatherPageResponse["units"]["wind
 
 function formatPrecipitation(value: number) {
   return `${value.toFixed(1)} mm`;
-}
-
-function formatTemperatureUnitLabel(unit: WeatherQuery["tempUnit"]) {
-  return unit === "fahrenheit" ? "Fahrenheit (°F)" : "Celsius (°C)";
-}
-
-function formatWindUnitLabel(unit: WeatherQuery["windUnit"]) {
-  return unit === "mph" ? "Miles per hour (mph)" : "Kilometers per hour (km/h)";
 }
 
 function formatObservedTime(time: string) {
@@ -149,9 +119,6 @@ function formatRecommendationSourceLabel(
 export function WeatherView({
   highlightedLocation,
   isRefreshing = false,
-  onTemperatureUnitChange,
-  onWindUnitChange,
-  selectedUnits,
   weather,
 }: WeatherViewProps) {
   const hourlyForecastListId = useId();
@@ -174,78 +141,14 @@ export function WeatherView({
     weather.daily[0]?.date,
     weather.daily[0]?.dayLabel,
   );
-  const requestedUnitsMatchWeatherUnits =
-    weather.units.temperature === selectedUnits.tempUnit &&
-    weather.units.windSpeed === selectedUnits.windUnit;
 
   return (
     <div className={styles.layout}>
-      <div className={styles.chrome}>
-        <div className={styles.metaBar}>
-          <p className={styles.metaPill}>Timezone: {highlightedLocation.timezone}</p>
-          <p className={styles.metaPill}>
-            Observed at {formatObservedTime(weather.current.observedAt)}
-          </p>
-          {isRefreshing ? (
-            <p aria-live="polite" className={styles.refreshing} role="status">
-              Refreshing forecast...
-            </p>
-          ) : null}
-        </div>
-
-        <section className={styles.unitToolbar} aria-labelledby="forecast-display-heading">
-          <h2 className={styles.visuallyHidden} id="forecast-display-heading">
-            Forecast display settings
-          </h2>
-
-          <label className={styles.compactControl}>
-            <span className={styles.compactLabel}>Temp</span>
-            <select
-              aria-label="Temperature unit"
-              className={styles.compactSelect}
-              value={selectedUnits.tempUnit}
-              onChange={(event) =>
-                onTemperatureUnitChange(event.target.value as WeatherQuery["tempUnit"])
-              }
-            >
-              <option value="celsius">°C</option>
-              <option value="fahrenheit">°F</option>
-            </select>
-          </label>
-
-          <label className={styles.compactControl}>
-            <span className={styles.compactLabel}>Wind</span>
-            <select
-              aria-label="Wind speed unit"
-              className={styles.compactSelect}
-              value={selectedUnits.windUnit}
-              onChange={(event) =>
-                onWindUnitChange(event.target.value as WeatherQuery["windUnit"])
-              }
-            >
-              <option value="kmh">km/h</option>
-              <option value="mph">mph</option>
-            </select>
-          </label>
-
-          <div className={styles.compactControlStatic}>
-            <span className={styles.compactLabel}>Rain</span>
-            <span className={styles.compactValue}>mm</span>
-          </div>
-        </section>
-
-        <p aria-live="polite" className={styles.unitsStatus} role="status">
-          {requestedUnitsMatchWeatherUnits
-            ? `Forecast values are shown in ${formatTemperatureUnitLabel(
-                weather.units.temperature,
-              )}, ${formatWindUnitLabel(weather.units.windSpeed)}, and millimeters for precipitation.`
-            : `Requested ${formatTemperatureUnitLabel(
-                selectedUnits.tempUnit,
-              )} and ${formatWindUnitLabel(
-                selectedUnits.windUnit,
-              )}. The cards below keep the last successful forecast visible until the refreshed values arrive.`}
+      {isRefreshing ? (
+        <p aria-live="polite" className={styles.refreshingNotice} role="status">
+          Refreshing forecast for {summaryLocationLabel}.
         </p>
-      </div>
+      ) : null}
 
       <div className={styles.contentGrid}>
         <div className={styles.mainColumn}>
@@ -266,7 +169,13 @@ export function WeatherView({
 
               <div className={styles.currentFigure}>
                 <span className={styles.currentIcon} aria-hidden="true">
-                  {getWeatherIconGlyph(weather.current.iconKey)}
+                  <img
+                    alt=""
+                    className={styles.currentIconImage}
+                    height="96"
+                    src={getWeatherIconAsset(weather.current.iconKey)}
+                    width="96"
+                  />
                 </span>
                 <p className={styles.currentTemperature}>
                   {formatTemperature(weather.current.temperature, weather.units.temperature)}
