@@ -7,6 +7,14 @@ import type {
   WeatherQuery,
 } from "@weather-app-plus-recommendations/contracts";
 
+import drizzleIcon from "../../../assets/images/icon-drizzle.webp";
+import fogIcon from "../../../assets/images/icon-fog.webp";
+import overcastIcon from "../../../assets/images/icon-overcast.webp";
+import partlyCloudyIcon from "../../../assets/images/icon-partly-cloudy.webp";
+import rainIcon from "../../../assets/images/icon-rain.webp";
+import snowIcon from "../../../assets/images/icon-snow.webp";
+import stormIcon from "../../../assets/images/icon-storm.webp";
+import sunnyIcon from "../../../assets/images/icon-sunny.webp";
 import styles from "./weather-view.module.css";
 
 type SelectedWeatherUnits = Pick<WeatherQuery, "tempUnit" | "windUnit">;
@@ -32,8 +40,24 @@ const iconGlyphByKey: Record<string, string> = {
   storm: "STORM",
 };
 
+const iconAssetByKey: Record<string, string> = {
+  sunny: sunnyIcon,
+  "partly-cloudy": partlyCloudyIcon,
+  cloudy: overcastIcon,
+  overcast: overcastIcon,
+  fog: fogIcon,
+  drizzle: drizzleIcon,
+  rain: rainIcon,
+  snow: snowIcon,
+  storm: stormIcon,
+};
+
 function getWeatherIconGlyph(iconKey: string) {
   return iconGlyphByKey[iconKey] ?? "CLOUD";
+}
+
+function getWeatherIconAsset(iconKey: string) {
+  return iconAssetByKey[iconKey] ?? overcastIcon;
 }
 
 function formatTemperature(value: number, unit: WeatherPageResponse["units"]["temperature"]) {
@@ -338,16 +362,21 @@ export function WeatherView({
                       <span className={styles.dailyDate}>{day.date}</span>
                     </div>
                     <div className={styles.dailyCondition}>
-                      <span aria-hidden="true" className={styles.dailyIcon}>
-                        {getWeatherIconGlyph(day.iconKey)}
-                      </span>
-                      <span>{day.conditionLabel}</span>
+                      <img
+                        alt=""
+                        aria-hidden="true"
+                        className={styles.dailyIconImage}
+                        height="52"
+                        src={getWeatherIconAsset(day.iconKey)}
+                        width="52"
+                      />
+                      <span className={styles.dailyConditionText}>{day.conditionLabel}</span>
                     </div>
                     <div className={styles.dailyTemperatures}>
-                      <span>
+                      <span className={styles.dailyTemperatureHigh}>
                         {formatTemperature(day.maxTemperature, weather.units.temperature)}
                       </span>
-                      <span>
+                      <span className={styles.dailyTemperatureLow}>
                         {formatTemperature(day.minTemperature, weather.units.temperature)}
                       </span>
                     </div>
