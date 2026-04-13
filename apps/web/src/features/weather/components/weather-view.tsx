@@ -232,12 +232,12 @@ export function WeatherView({
                 <h2 className={styles.currentHeading} id="current-weather-heading">
                   {summaryLocationLabel}
                 </h2>
-                <p className={styles.currentCondition}>{weather.current.conditionLabel}</p>
                 <p className={styles.currentContext}>
                   {summaryDateLabel ? `${summaryDateLabel} · ` : ""}
                   Observed at {formatObservedTime(weather.current.observedAt)} in{" "}
                   {highlightedLocation.timezone}
                 </p>
+                <p className={styles.currentCondition}>{weather.current.conditionLabel}</p>
               </div>
 
               <div className={styles.currentFigure}>
@@ -249,26 +249,29 @@ export function WeatherView({
                 </p>
               </div>
             </div>
-
-            <dl className={styles.metricsGrid}>
-              <div className={styles.metricCard}>
-                <dt>Feels like</dt>
-                <dd>{formatTemperature(weather.current.feelsLike, weather.units.temperature)}</dd>
-              </div>
-              <div className={styles.metricCard}>
-                <dt>Humidity</dt>
-                <dd>{weather.current.humidity}%</dd>
-              </div>
-              <div className={styles.metricCard}>
-                <dt>Wind speed</dt>
-                <dd>{formatWindSpeed(weather.current.windSpeed, weather.units.windSpeed)}</dd>
-              </div>
-              <div className={styles.metricCard}>
-                <dt>Precipitation</dt>
-                <dd>{formatPrecipitation(weather.current.precipitation)}</dd>
-              </div>
-            </dl>
           </section>
+
+          <dl
+            aria-label="Current weather supporting metrics"
+            className={styles.metricsGrid}
+          >
+            <div className={styles.metricCard}>
+              <dt>Feels like</dt>
+              <dd>{formatTemperature(weather.current.feelsLike, weather.units.temperature)}</dd>
+            </div>
+            <div className={styles.metricCard}>
+              <dt>Humidity</dt>
+              <dd>{weather.current.humidity}%</dd>
+            </div>
+            <div className={styles.metricCard}>
+              <dt>Wind speed</dt>
+              <dd>{formatWindSpeed(weather.current.windSpeed, weather.units.windSpeed)}</dd>
+            </div>
+            <div className={styles.metricCard}>
+              <dt>Precipitation</dt>
+              <dd>{formatPrecipitation(weather.current.precipitation)}</dd>
+            </div>
+          </dl>
 
           <section
             className={styles.recommendationsSection}
