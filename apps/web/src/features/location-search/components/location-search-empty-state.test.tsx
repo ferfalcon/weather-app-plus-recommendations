@@ -39,7 +39,7 @@ describe("LocationSearchEmptyState", () => {
     expect(
       await screen.findByRole("heading", {
         level: 1,
-        name: "Search for a place, then read the forecast.",
+        name: "How's the sky looking today?",
       }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Search location")).toBeInTheDocument();
@@ -84,7 +84,7 @@ describe("LocationSearchEmptyState", () => {
     expect(searchLocations).toHaveBeenCalledWith("Atlantis");
   });
 
-  it("marks the selected location button as pressed", async () => {
+  it("hides the location result list after a location is selected", async () => {
     vi.mocked(searchLocations).mockResolvedValue([testLocation]);
     vi.mocked(getWeather).mockResolvedValue(createWeatherPageResponse());
 
@@ -101,7 +101,12 @@ describe("LocationSearchEmptyState", () => {
     fireEvent.click(locationResultButton);
 
     await waitFor(() => {
-      expect(locationResultButton).toHaveAttribute("aria-pressed", "true");
+      expect(
+        screen.queryByRole("heading", {
+          level: 2,
+          name: "Select the right match",
+        }),
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -159,6 +164,13 @@ describe("LocationSearchEmptyState", () => {
       }),
     ).toBeInTheDocument();
     expect(screen.getByText("Plan an indoor museum stop")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", {
+        level: 2,
+        name: "Select the right match",
+      }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Try a quick search")).not.toBeInTheDocument();
   });
 
   it("restores the selected forecast from route search params after a reload", async () => {
@@ -177,6 +189,12 @@ describe("LocationSearchEmptyState", () => {
         name: "Montevideo, Montevideo Department, Uruguay",
       }),
     ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", {
+        level: 2,
+        name: "Select the right match",
+      }),
+    ).not.toBeInTheDocument();
     expect(getWeather).toHaveBeenCalledWith({
       lat: -34.9,
       lon: -56.16,

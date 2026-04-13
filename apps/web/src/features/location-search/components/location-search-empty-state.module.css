@@ -1,29 +1,46 @@
 .layout {
   display: grid;
-  gap: 1.15rem;
-  padding-block: 0.35rem 1.4rem;
+  gap: 1.5rem;
+  padding-block: 0.2rem 1.4rem;
 }
 
-.hero,
-.sidebar,
-.weatherPanel {
-  padding: var(--space-6);
+.layoutLoaded {
+  gap: 1.15rem;
 }
 
 .hero {
   display: grid;
   align-content: start;
-  gap: 1.85rem;
+  gap: 1.35rem;
+  margin-inline: auto;
+  max-width: 52rem;
   position: relative;
+  width: 100%;
+}
+
+.heroCompact {
+  gap: 0.95rem;
+  max-width: 44rem;
+}
+
+.weatherPanel {
+  display: grid;
+  gap: 1.15rem;
+  padding: var(--space-6);
 }
 
 .heroIntro {
   display: grid;
-  gap: var(--space-3);
+  gap: 0.65rem;
   justify-items: center;
   margin-inline: auto;
-  max-width: 46rem;
+  max-width: 48rem;
   text-align: center;
+}
+
+.heroIntroCompact {
+  gap: 0.45rem;
+  max-width: 36rem;
 }
 
 .kicker,
@@ -45,9 +62,14 @@
 }
 
 .heading {
-  font-size: var(--font-size-display);
+  font-size: clamp(3rem, 9vw, 4.4rem);
   letter-spacing: -0.05em;
-  max-width: 12ch;
+  max-width: 13ch;
+}
+
+.headingCompact {
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  max-width: 11ch;
 }
 
 .sidebarHeading {
@@ -58,32 +80,52 @@
 
 .copy {
   color: var(--color-text);
-  font-size: 1.05rem;
+  font-size: 1rem;
   line-height: var(--line-height-body);
   margin: 0;
-  max-width: 50ch;
+  max-width: 56ch;
+}
+
+.copyCompact {
+  color: var(--color-text-muted);
+  font-size: 0.98rem;
+  max-width: 44ch;
 }
 
 .form {
   background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.03)),
-    rgb(19 23 48 / 0.7);
+    linear-gradient(180deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.03)),
+    rgb(35 38 69 / 0.7);
   border: 1px solid rgb(255 255 255 / 0.1);
   border-radius: calc(var(--radius-xl) + 0.25rem);
-  box-shadow: var(--shadow-raised);
+  box-shadow: 0 14px 36px rgb(3 7 30 / 0.26);
   display: grid;
-  gap: var(--space-4);
+  gap: 0.95rem;
   margin-inline: auto;
-  max-width: 43.5rem;
-  padding: 1.4rem;
+  max-width: 41rem;
+  padding: 1.1rem;
   position: relative;
   width: 100%;
 }
 
+.formCompact {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.02)),
+    rgb(34 37 67 / 0.64);
+  border-radius: calc(var(--radius-lg) + 0.2rem);
+  max-width: 38rem;
+  padding: 0.95rem;
+}
+
 .formHeader {
   display: grid;
-  gap: 0.35rem;
-  justify-items: start;
+  gap: 0.25rem;
+  justify-items: center;
+  text-align: center;
+}
+
+.formHeaderCompact {
+  gap: 0.1rem;
 }
 
 .label {
@@ -102,16 +144,28 @@
 
 .searchControls {
   display: grid;
-  gap: var(--space-3);
+  gap: 0.75rem;
+}
+
+.searchControlsCompact {
+  gap: 0.65rem;
 }
 
 .searchInput {
-  min-height: 4.25rem;
+  min-height: 3.75rem;
+}
+
+.searchInputCompact {
+  min-height: var(--control-height);
 }
 
 .submitButton {
+  min-height: 3.75rem;
   width: 100%;
-  min-height: 4.25rem;
+}
+
+.submitButtonCompact {
+  min-height: var(--control-height);
 }
 
 .helper {
@@ -120,7 +174,11 @@
   line-height: var(--line-height-body);
   margin: 0;
   min-height: 0;
-  text-align: left;
+  text-align: center;
+}
+
+.helperCompact {
+  font-size: 0.88rem;
 }
 
 .statusPanel,
@@ -136,7 +194,9 @@
   box-shadow: var(--shadow-raised);
   display: grid;
   gap: var(--space-3);
+  margin-inline: auto;
   padding: 1.15rem;
+  width: min(100%, 41rem);
 }
 
 .statusPanel {
@@ -190,6 +250,7 @@
   gap: 0.95rem;
   margin-top: 0.1rem;
   padding: 1.25rem;
+  width: min(100%, 43rem);
 }
 
 .resultsHeader {
@@ -302,7 +363,7 @@
   gap: 0.85rem;
   justify-items: center;
   margin-inline: auto;
-  max-width: 43.5rem;
+  max-width: 41rem;
   width: 100%;
 }
 
@@ -321,6 +382,7 @@
 }
 
 .sampleButton {
+  min-height: 3.25rem;
   width: 100%;
 }
 
@@ -334,11 +396,6 @@
 .sidebarIntro {
   display: grid;
   gap: 0.6rem;
-}
-
-.weatherPanel {
-  display: grid;
-  gap: 1.15rem;
 }
 
 .selectionCard {
@@ -426,7 +483,11 @@
 
 @media (min-width: 30rem) {
   .form {
-    padding: 1.5rem;
+    padding: 1.35rem;
+  }
+
+  .formCompact {
+    padding: 1rem;
   }
 
   .selectionDetails {
@@ -448,11 +509,34 @@
 
 @media (min-width: 48rem) {
   .layout {
-    gap: 1.2rem;
+    gap: 1.65rem;
+    padding-block: 0.3rem 1.8rem;
+  }
+
+  .hero,
+  .weatherPanel {
+    padding: var(--space-8);
+  }
+
+  .hero {
+    gap: 1.55rem;
+  }
+
+  .heroCompact {
+    gap: 1rem;
+  }
+
+  .copy {
+    font-size: 1.08rem;
+  }
+
+  .form {
+    padding: 1.2rem;
   }
 
   .searchControls {
     align-items: end;
+    gap: 0.85rem;
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
@@ -461,8 +545,8 @@
   }
 
   .submitButton {
+    min-width: 9rem;
     width: auto;
-    min-width: 9.25rem;
   }
 
   .resultsHeader {
@@ -472,46 +556,41 @@
   .resultsList {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-  .sidebar {
-    min-height: 100%;
-  }
 }
 
 @media (min-width: 56rem) {
   .layout {
     align-items: start;
-    gap: 1.2rem 1.25rem;
-    grid-template-columns: minmax(0, 1.58fr) minmax(19rem, 0.88fr);
-    padding-block: 1.35rem 2.1rem;
-  }
-
-  .hero,
-  .sidebar,
-  .weatherPanel {
-    padding: 1.8rem;
+    gap: 1.2rem;
+    padding-block: 0.35rem 2.1rem;
   }
 
   .hero {
-    gap: 1.75rem;
+    max-width: 54rem;
+  }
+
+  .heroCompact {
+    max-width: 46rem;
   }
 
   .weatherPanel {
     grid-column: 1 / -1;
+    padding: 1.8rem;
   }
 }
 
 @media (min-width: 70rem) {
   .layout {
-    gap: 1.3rem;
-    grid-template-columns: minmax(0, 1.72fr) minmax(19rem, 0.86fr);
-    padding-block: 1.7rem 3.1rem;
+    gap: 1.35rem;
+    padding-block: 0.45rem 3.1rem;
   }
 
-  .hero,
-  .sidebar,
-  .weatherPanel {
-    padding: 1.9rem;
+  .hero {
+    max-width: 56rem;
+  }
+
+  .heroCompact {
+    max-width: 46rem;
   }
 
   .heroIntro {
@@ -523,6 +602,6 @@
   }
 
   .weatherPanel {
-    grid-column: 1 / -1;
+    padding: 1.9rem;
   }
 }

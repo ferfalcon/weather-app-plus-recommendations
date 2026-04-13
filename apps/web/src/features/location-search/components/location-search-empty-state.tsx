@@ -16,7 +16,6 @@ import { searchLocations } from "../../../services/api/search-locations";
 import { LocationSearchHero } from "./location-search-hero";
 import { LocationSearchQuickSearches } from "./location-search-quick-searches";
 import { LocationSearchResults } from "./location-search-results";
-import { LocationSearchSelectionSidebar } from "./location-search-selection-sidebar";
 import { LocationSearchStatusPanel } from "./location-search-status-panel";
 import { formatLocationLabel } from "./location-search-view-helpers";
 import {
@@ -197,6 +196,18 @@ export function LocationSearchEmptyState() {
       : lastSuccessfulLocation;
   const hasDisplayedWeather =
     displayedWeather != null && displayedWeatherLocation !== null;
+  const isCompactHero = hasDisplayedWeather || selectedLocation !== null;
+  const showQuickSearches =
+    !isCompactHero &&
+    submittedQuery.length === 0 &&
+    !isSearching &&
+    !locationSearchQuery.isError &&
+    !hasNoResults;
+  const showLocationResults =
+    isSearching ||
+    locationSearchQuery.isError ||
+    hasNoResults ||
+    (submittedQuery.length > 0 && selectedLocation === null && locations.length > 0);
   const searchFeedbackMessage = getSearchFeedbackMessage({
     submittedQuery,
     selectedLocation,
@@ -207,17 +218,6 @@ export function LocationSearchEmptyState() {
     hasWeatherSuccess: isShowingCurrentWeather,
     resultCount: locations.length,
   });
-  const statusLocation = selectedLocation ?? lastSuccessfulLocation;
-  const statusHeading = selectedLocation
-    ? selectedLocation.name
-    : lastSuccessfulLocation
-      ? lastSuccessfulLocation.name
-      : "Choose a place to load weather";
-  const statusKicker = selectedLocation
-    ? "Selected location"
-    : lastSuccessfulLocation
-      ? "Latest loaded forecast"
-      : "Ready to search";
 
   function updateRouteSearch(
     updater: (previousSearch: LocationSearchPageSearch) => LocationSearchPageSearch,
@@ -302,11 +302,20 @@ export function LocationSearchEmptyState() {
   }
 
   return (
-    <section className={styles.layout}>
-      <Surface className={styles.hero}>
+    <section
+      className={[styles.layout, isCompactHero ? styles.layoutLoaded : ""]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <div
+        className={[styles.hero, isCompactHero ? styles.heroCompact : ""]
+          .filter(Boolean)
+          .join(" ")}
+      >
         <LocationSearchHero
           helperText={searchFeedbackMessage}
           inputId="location-query"
+          isCompact={isCompactHero}
           isSearching={isSearching}
           isSubmitDisabled={!trimmedQuery || isSearching}
           query={query}
@@ -314,31 +323,26 @@ export function LocationSearchEmptyState() {
           onQueryChange={setQuery}
           onSubmit={handleSubmit}
         />
-        <LocationSearchQuickSearches
-          sampleLocations={sampleLocations}
-          onSampleLocationClick={handleSampleLocationClick}
-        />
-        <LocationSearchResults
-          hasLocationSearchError={locationSearchQuery.isError}
-          hasNoResults={hasNoResults}
-          isSearching={isSearching}
-          locationResultsMetaId={locationResultsMetaId}
-          locations={locations}
-          searchErrorMessage={searchErrorMessage}
-          selectedLocationId={selectedLocation?.id ?? null}
-          submittedQuery={submittedQuery}
-          onLocationSelect={handleLocationSelect}
-        />
-      </Surface>
-
-      <Surface as="aside" className={styles.sidebar}>
-        <LocationSearchSelectionSidebar
-          isSelectedLocationActive={selectedLocation !== null}
-          statusHeading={statusHeading}
-          statusKicker={statusKicker}
-          statusLocation={statusLocation}
-        />
-      </Surface>
+        {showQuickSearches ? (
+          <LocationSearchQuickSearches
+            sampleLocations={sampleLocations}
+            onSampleLocationClick={handleSampleLocationClick}
+          />
+        ) : null}
+        {showLocationResults ? (
+          <LocationSearchResults
+            hasLocationSearchError={locationSearchQuery.isError}
+            hasNoResults={hasNoResults}
+            isSearching={isSearching}
+            locationResultsMetaId={locationResultsMetaId}
+            locations={locations}
+            searchErrorMessage={searchErrorMessage}
+            selectedLocationId={selectedLocation?.id ?? null}
+            submittedQuery={submittedQuery}
+            onLocationSelect={handleLocationSelect}
+          />
+        ) : null}
+      </div>
 
       {selectedLocation || hasDisplayedWeather ? (
         <Surface

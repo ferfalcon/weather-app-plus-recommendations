@@ -1,77 +1,117 @@
 .app {
+  background:
+    radial-gradient(circle at top center, rgb(88 104 255 / 0.08), transparent 28%),
+    linear-gradient(180deg, rgb(6 8 28 / 0.96), rgb(4 6 23 / 0.98));
   min-height: 100vh;
   overflow: hidden;
   position: relative;
 }
 
 .backdrop {
-  filter: saturate(115%);
+  filter: saturate(108%);
   pointer-events: none;
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(circle at 18% 14%, rgb(255 152 56 / 0.12), transparent 18%),
-    radial-gradient(circle at 50% -2%, rgb(84 99 255 / 0.28), transparent 28%),
-    radial-gradient(circle at 84% 18%, rgb(99 110 255 / 0.18), transparent 20%),
-    radial-gradient(circle at 50% 100%, rgb(47 58 139 / 0.24), transparent 30%);
+    radial-gradient(circle at 16% 10%, rgb(255 152 56 / 0.08), transparent 18%),
+    radial-gradient(circle at 50% -4%, rgb(84 99 255 / 0.18), transparent 24%),
+    radial-gradient(circle at 84% 16%, rgb(99 110 255 / 0.12), transparent 18%),
+    radial-gradient(circle at 50% 100%, rgb(47 58 139 / 0.16), transparent 28%);
 }
 
 .header {
   position: relative;
   z-index: 1;
-  padding-block: 1.05rem 0.3rem;
+  padding-block: 1rem 0.15rem;
 }
 
 .headerInner {
   align-items: center;
   display: flex;
   gap: 1rem;
-  justify-content: space-between;
+  justify-content: flex-start;
+}
+
+.brandLockup {
+  align-items: center;
+  display: flex;
+  gap: 0.9rem;
+}
+
+.brandMark {
+  width: 1.45rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, transparent 28%, var(--color-page-deep) 30% 45%, transparent 48%),
+    conic-gradient(
+      from 0deg,
+      transparent 0deg 18deg,
+      var(--color-warm) 18deg 36deg,
+      transparent 36deg 54deg,
+      var(--color-warm) 54deg 72deg,
+      transparent 72deg 90deg,
+      var(--color-warm) 90deg 108deg,
+      transparent 108deg 126deg,
+      var(--color-warm) 126deg 144deg,
+      transparent 144deg 162deg,
+      var(--color-warm) 162deg 180deg,
+      transparent 180deg 198deg,
+      var(--color-warm) 198deg 216deg,
+      transparent 216deg 234deg,
+      var(--color-warm) 234deg 252deg,
+      transparent 252deg 270deg,
+      var(--color-warm) 270deg 288deg,
+      transparent 288deg 306deg,
+      var(--color-warm) 306deg 324deg,
+      transparent 324deg 342deg,
+      var(--color-warm) 342deg 360deg
+    );
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.05);
 }
 
 .eyebrow {
   margin: 0;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-label);
+  color: var(--color-text-strong);
+  font-size: 1.05rem;
   font-weight: 700;
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
+  letter-spacing: -0.02em;
 }
 
 .title {
-  margin: 0.3rem 0 0;
-  color: var(--color-text-strong);
-  font-size: 1.08rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  margin: 0.12rem 0 0;
+  color: var(--color-text-soft);
+  font-size: 0.94rem;
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 .main {
   position: relative;
   z-index: 1;
-  padding-block: 0.75rem 2.85rem;
+  padding-block: 0.55rem 2.85rem;
 }
 
 @media (min-width: 48rem) {
   .header {
-    padding-block: 1.35rem 0.55rem;
+    padding-block: 1.25rem 0.2rem;
   }
 
-  .title {
-    font-size: 1.18rem;
+  .eyebrow {
+    font-size: 1.1rem;
   }
 
   .main {
-    padding-block: 0.95rem 3.8rem;
+    padding-block: 0.7rem 3.8rem;
   }
 }
 
 @media (min-width: 72rem) {
   .header {
-    padding-block: 1.55rem 0.7rem;
+    padding-block: 1.35rem 0.25rem;
   }
 
   .main {
-    padding-block: 1.05rem 4.35rem;
+    padding-block: 0.8rem 4.35rem;
   }
 }

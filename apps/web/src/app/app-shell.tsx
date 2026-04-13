@@ -9,9 +9,12 @@ export function AppShell({ children }: PropsWithChildren) {
       <div className={styles.backdrop} aria-hidden="true" />
       <header className={styles.header}>
         <Container className={styles.headerInner}>
-          <div>
-            <p className={styles.eyebrow}>Weather App + Recommendations</p>
-            <p className={styles.title}>Search-first live weather flow</p>
+          <div className={styles.brandLockup}>
+            <span aria-hidden="true" className={styles.brandMark} />
+            <div>
+              <p className={styles.eyebrow}>Weather Now</p>
+              <p className={styles.title}>Search-first forecast and recommendations</p>
+            </div>
           </div>
         </Container>
       </header>
