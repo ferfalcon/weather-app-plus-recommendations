@@ -428,17 +428,28 @@ export function WeatherView({
               <ul className={styles.hourlyList} id={hourlyForecastListId}>
                 {hourlyForecastDay.hourly.map((hour) => (
                   <li className={styles.hourlyCard} key={hour.time}>
-                    <p className={styles.hourlyTime}>{formatHourlyTime(hour.time)}</p>
-                    <span aria-hidden="true" className={styles.hourlyIcon}>
-                      {getWeatherIconGlyph(hour.iconKey)}
-                    </span>
-                    <p className={styles.hourlyTemperature}>
-                      {formatTemperature(hour.temperature, weather.units.temperature)}
-                    </p>
-                    <p className={styles.hourlyCondition}>{hour.conditionLabel}</p>
-                    <p className={styles.hourlyRain}>
-                      Rain chance {hour.precipitationProbability}%
-                    </p>
+                    <div className={styles.hourlyLead}>
+                      <img
+                        alt=""
+                        aria-hidden="true"
+                        className={styles.hourlyIconImage}
+                        height="40"
+                        src={getWeatherIconAsset(hour.iconKey)}
+                        width="40"
+                      />
+                      <div className={styles.hourlyCopy}>
+                        <p className={styles.hourlyTime}>{formatHourlyTime(hour.time)}</p>
+                        <p className={styles.hourlyCondition}>{hour.conditionLabel}</p>
+                      </div>
+                    </div>
+                    <div className={styles.hourlyValues}>
+                      <p className={styles.hourlyTemperature}>
+                        {formatTemperature(hour.temperature, weather.units.temperature)}
+                      </p>
+                      <p className={styles.hourlyRain}>
+                        Rain {hour.precipitationProbability}%
+                      </p>
+                    </div>
                   </li>
                 ))}
               </ul>
