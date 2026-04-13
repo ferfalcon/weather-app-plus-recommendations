@@ -345,54 +345,53 @@ export function LocationSearchEmptyState() {
       </div>
 
       {selectedLocation || hasDisplayedWeather ? (
-        <Surface
-          aria-busy={isInitialWeatherLoad || isRefreshingWeather}
-          as="section"
-          className={styles.weatherPanel}
-        >
-          {isInitialWeatherLoad ? (
-            <LocationSearchStatusPanel
-              copy={
-                <>
-                  Loading weather for <strong>{formatLocationLabel(selectedLocation!)}</strong>{" "}
-                  through the app API.
-                </>
-              }
-              heading="Fetching the forecast"
-              kicker="Weather loading"
-              liveRegion
-            />
-          ) : null}
+        hasDisplayedWeather ? (
+          <section
+            aria-busy={isInitialWeatherLoad || isRefreshingWeather}
+            className={`${styles.weatherPanel} ${styles.weatherPanelFrameless}`}
+          >
+            {isInitialWeatherLoad ? (
+              <LocationSearchStatusPanel
+                copy={
+                  <>
+                    Loading weather for <strong>{formatLocationLabel(selectedLocation!)}</strong>{" "}
+                    through the app API.
+                  </>
+                }
+                heading="Fetching the forecast"
+                kicker="Weather loading"
+                liveRegion
+              />
+            ) : null}
 
-          {isRefreshingWeather ? (
-            <LocationSearchStatusPanel
-              copy={
-                <>
-                  Keeping the last successful forecast visible while we load fresh
-                  weather for <strong>{formatLocationLabel(selectedLocation!)}</strong>.
-                </>
-              }
-              heading="Updating the selected forecast"
-              kicker="Refresh in progress"
-              liveRegion
-            />
-          ) : null}
+            {isRefreshingWeather ? (
+              <LocationSearchStatusPanel
+                copy={
+                  <>
+                    Keeping the last successful forecast visible while we load fresh
+                    weather for <strong>{formatLocationLabel(selectedLocation!)}</strong>.
+                  </>
+                }
+                heading="Updating the selected forecast"
+                kicker="Refresh in progress"
+                liveRegion
+              />
+            ) : null}
 
-          {weatherQuery.isError ? (
-            <LocationSearchStatusPanel
-              copy={`${weatherErrorMessage}${
-                lastSuccessfulWeather
-                  ? " Showing the last successful weather result while the new request is unavailable."
-                  : " Try selecting the location again in a moment."
-              }`}
-              heading="The API could not load this forecast"
-              kicker="Weather error"
-              role="alert"
-              tone="error"
-            />
-          ) : null}
+            {weatherQuery.isError ? (
+              <LocationSearchStatusPanel
+                copy={`${weatherErrorMessage}${
+                  lastSuccessfulWeather
+                    ? " Showing the last successful weather result while the new request is unavailable."
+                    : " Try selecting the location again in a moment."
+                }`}
+                heading="The API could not load this forecast"
+                kicker="Weather error"
+                role="alert"
+                tone="error"
+              />
+            ) : null}
 
-          {hasDisplayedWeather ? (
             <WeatherView
               highlightedLocation={displayedWeatherLocation}
               isRefreshing={isRefreshingWeather}
@@ -402,8 +401,56 @@ export function LocationSearchEmptyState() {
               title={isShowingCurrentWeather ? "Live weather" : "Latest loaded weather"}
               weather={displayedWeather}
             />
-          ) : null}
-        </Surface>
+          </section>
+        ) : (
+          <Surface
+            aria-busy={isInitialWeatherLoad || isRefreshingWeather}
+            as="section"
+            className={styles.weatherPanel}
+          >
+            {isInitialWeatherLoad ? (
+              <LocationSearchStatusPanel
+                copy={
+                  <>
+                    Loading weather for <strong>{formatLocationLabel(selectedLocation!)}</strong>{" "}
+                    through the app API.
+                  </>
+                }
+                heading="Fetching the forecast"
+                kicker="Weather loading"
+                liveRegion
+              />
+            ) : null}
+
+            {isRefreshingWeather ? (
+              <LocationSearchStatusPanel
+                copy={
+                  <>
+                    Keeping the last successful forecast visible while we load fresh
+                    weather for <strong>{formatLocationLabel(selectedLocation!)}</strong>.
+                  </>
+                }
+                heading="Updating the selected forecast"
+                kicker="Refresh in progress"
+                liveRegion
+              />
+            ) : null}
+
+            {weatherQuery.isError ? (
+              <LocationSearchStatusPanel
+                copy={`${weatherErrorMessage}${
+                  lastSuccessfulWeather
+                    ? " Showing the last successful weather result while the new request is unavailable."
+                    : " Try selecting the location again in a moment."
+                }`}
+                heading="The API could not load this forecast"
+                kicker="Weather error"
+                role="alert"
+                tone="error"
+              />
+            ) : null}
+          </Surface>
+        )
       ) : null}
     </section>
   );

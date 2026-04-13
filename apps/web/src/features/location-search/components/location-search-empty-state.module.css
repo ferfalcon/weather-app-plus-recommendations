@@ -29,6 +29,10 @@
   padding: var(--space-6);
 }
 
+.weatherPanelFrameless {
+  padding: 0;
+}
+
 .heroIntro {
   display: grid;
   gap: 0.65rem;
